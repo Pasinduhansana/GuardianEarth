@@ -20,3 +20,20 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  display: flex;
+  animation: scroll 25s linear infinite;
+}

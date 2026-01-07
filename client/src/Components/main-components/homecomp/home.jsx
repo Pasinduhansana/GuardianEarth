@@ -11,18 +11,12 @@ import droneimage from "../../../assets/droneimage.png";
 import mobileCommandimage from "../../../assets/mobileCommandimage.png";
 import { ArrowRight } from "lucide-react";
 import { Quote, User } from "lucide-react";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import {
-  AlertTriangle,
-  MapPin,
-  TrendingUp,
-  ShieldCheck,
-  AlertCircle,
-  NotebookPen,
-} from "lucide-react";
+import { AlertTriangle, MapPin, TrendingUp, ShieldCheck, AlertCircle, NotebookPen } from "lucide-react";
 import StatsSection from "./StatSection";
 import Footer from "./footer";
+import FloodPredictor from "../prediction-model/FloodPredictor";
 import { use } from "react";
 
 const Home = () => {
@@ -34,14 +28,12 @@ const Home = () => {
   const navigate = useNavigate();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  
-  const navigate = useNavigate();
-  };
-  const handleClick = ()=> {
-    navigate('/flood-predictor')
-  };
 
-  
+    const navigate = useNavigate();
+  };
+  const handleClick = () => {
+    navigate("/flood-predictor");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,7 +42,6 @@ const Home = () => {
       } else {
         setIsScrolled(false);
       }
-
     };
     window.addEventListener("scroll", handleScroll);
     return () => {
@@ -111,8 +102,6 @@ const Home = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
   };
 
- 
-
   return (
     <>
       <div className="min-h-screen bg-white relative">
@@ -125,8 +114,7 @@ const Home = () => {
       linear-gradient(to left, #22c55e 1px, transparent 1px), 
       linear-gradient(to top, #22c55e 1px, transparent 1px)`,
               backgroundSize: "50px 50px",
-              WebkitMaskImage:
-                "linear-gradient(to left, black 10%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to left, black 10%, transparent 100%)",
               maskImage: "linear-gradient(to left, black 10%, transparent 90%)",
             }}
           ></div>
@@ -150,14 +138,16 @@ const Home = () => {
                 </h1>
               </div>
               <p className="text-sm md:text-[16px] text-gray-600 max-w-xl mb-10 leading-relaxed">
-                Advanced 3D technology and real-time monitoring systems to
-                predict, prepare for, and respond to natural disasters with
-                unprecedented efficiency.
+                Advanced 3D technology and real-time monitoring systems to predict, prepare for, and respond to natural disasters with unprecedented
+                efficiency.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button onClick = {handleClick} className="bg-green-500 hover:bg-green-600 z-10 w-[200px] h-[38px]  justify-center text-white px-2 py-3 rounded-md transition-all duration-300 text-[15px] font-normal !rounded-button whitespace-nowrap cursor-pointer shadow-md flex items-center">
+                <button
+                  onClick={handleClick}
+                  className="bg-green-500 hover:bg-green-600 z-10 w-[200px] h-[38px]  justify-center text-white px-2 py-3 rounded-md transition-all duration-300 text-[15px] font-normal !rounded-button whitespace-nowrap cursor-pointer shadow-md flex items-center"
+                >
                   <FaBolt className="mr-2" /> Disaster Early Warning
-                </button> 
+                </button>
                 <button className="bg-white hover:bg-gray-50 w-[160px] h-[38px] gap-2 flex flex-row justify-center text-gray-800 border border-gray-200 px-[14px] py-3 rounded-md transition-all duration-300 text-[15px] font-normal !rounded-button whitespace-nowrap cursor-pointer shadow-md  items-center group">
                   <span>View Resources</span>
                   <FaArrowRight className=" transition-transform group-hover:translate-x-[2px] duration-100 mt-[0.5px] mx-[5px]" />
@@ -175,9 +165,7 @@ const Home = () => {
                     <FaUserShield className="text-yellow-500 text-xs" />
                   </div>
                 </div>
-                <span className="ml-3 text-[13px] text-gray-400">
-                  Trusted by 200+ emergency response teams worldwide
-                </span>
+                <span className="ml-3 text-[13px] text-gray-400">Trusted by 200+ emergency response teams worldwide</span>
               </div>
             </div>
 
@@ -223,9 +211,7 @@ const Home = () => {
 
                 {/* Text Content */}
                 <div className="flex flex-col justify-center">
-                  <div className="text-2xl font-bold text-green-400 leading-none">
-                    98%
-                  </div>
+                  <div className="text-2xl font-bold text-green-400 leading-none">98%</div>
                   <p className="text-sm text-gray-700 mt-1">Accuracy Rate</p>
                 </div>
               </div>
@@ -243,9 +229,7 @@ const Home = () => {
 
               {/* Details */}
               <div className="flex flex-col justify-center">
-                <div className="text-lg font-semibold text-red-600">
-                  Disaster Alert
-                </div>
+                <div className="text-lg font-semibold text-red-600">Disaster Alert</div>
                 <p className="text-sm text-gray-700">High Risk Zone</p>
               </div>
             </div>
@@ -259,9 +243,7 @@ const Home = () => {
 
                 {/* Text Content */}
                 <div className="flex flex-col justify-center">
-                  <div className="text-[18px] font-semibold text-yellow-400">
-                    Warning
-                  </div>
+                  <div className="text-[18px] font-semibold text-yellow-400">Warning</div>
                   <p className="text-sm text-gray-800 mt-1">High Risk Zone</p>
                 </div>
               </div>
@@ -288,11 +270,7 @@ const Home = () => {
             <div className="w-full md:w-1/2 relative h-[400px] md:h-[500px]">
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-auto h-full max-w-[800px] max-h-[800px] relative">
-                  <img
-                    src={world_globe}
-                    alt="3D Disaster Monitoring System"
-                    className="w-full h-Auto -mt-14 object-cover animate-spin-slow"
-                  />
+                  <img src={world_globe} alt="3D Disaster Monitoring System" className="w-full h-Auto -mt-14 object-cover animate-spin-slow" />
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="w-[90%] h-[90%] border-2 border-green-200 rounded-full animate-pulse opacity-50"></div>
                     <div className="absolute w-[70%] h-[70%] border border-green-300 rounded-full animate-ping opacity-30"></div>
@@ -318,24 +296,17 @@ const Home = () => {
 
         {/* Emergency Types Section */}
         <section className="py-8 bg-white relative overflow-hidden">
-          <EmergencyResponseSection
-            emergencyTypes={emergencyTypes}
-            activeEmergency={activeEmergency}
-            setActiveEmergency={setActiveEmergency}
-          />
+          <EmergencyResponseSection emergencyTypes={emergencyTypes} activeEmergency={activeEmergency} setActiveEmergency={setActiveEmergency} />
         </section>
         {/* 3D Visualization Section */}
         <section className="py-[68px] h-auto  relative overflow-hidden">
           <div className="container mx-auto h-auto px-4 relative z-10">
             <div className="flex flex-col md:flex-row items-center">
               <div className="w-full md:w-1/2 mb-10 md:mb-0 md:pr-10">
-                <h2 className="text-[24px] font-bold text-gray-900 mb-4 text-left">
-                  Advanced 3D Visualization
-                </h2>
+                <h2 className="text-[24px] font-bold text-gray-900 mb-4 text-left">Advanced 3D Visualization</h2>
                 <p className="text-[15px] text-gray-600 mb-6 text-left">
-                  Our cutting-edge 3D modeling technology allows emergency
-                  responders to visualize disaster scenarios in real-time,
-                  improving decision-making and resource allocation.
+                  Our cutting-edge 3D modeling technology allows emergency responders to visualize disaster scenarios in real-time, improving
+                  decision-making and resource allocation.
                 </p>
                 <div className="space-y-8 text-left mt-12">
                   <div className="flex items-center ">
@@ -343,13 +314,8 @@ const Home = () => {
                       <MapPin className="text-green-500 w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-[16px] font-semibold text-gray-900 mb-1">
-                        Real-time Mapping
-                      </h3>
-                      <p className="text-gray-600 text-sm">
-                        Accurate geographical representation of affected areas
-                        with live updates.
-                      </p>
+                      <h3 className="text-[16px] font-semibold text-gray-900 mb-1">Real-time Mapping</h3>
+                      <p className="text-gray-600 text-sm">Accurate geographical representation of affected areas with live updates.</p>
                     </div>
                   </div>
                   <div className="flex items-center">
@@ -357,13 +323,8 @@ const Home = () => {
                       <TrendingUp className="text-green-500 w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-[16px] font-semibold text-gray-900 mb-1">
-                        Predictive Analytics
-                      </h3>
-                      <p className="text-gray-600 text-sm">
-                        AI-powered predictions to anticipate disaster
-                        progression and impact.
-                      </p>
+                      <h3 className="text-[16px] font-semibold text-gray-900 mb-1">Predictive Analytics</h3>
+                      <p className="text-gray-600 text-sm">AI-powered predictions to anticipate disaster progression and impact.</p>
                     </div>
                   </div>
                   <div className="flex items-center">
@@ -371,13 +332,8 @@ const Home = () => {
                       <NotebookPen className="text-green-500 w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-[16px] font-semibold text-gray-900 mb-1">
-                        Evacuation Planning
-                      </h3>
-                      <p className="text-gray-600 text-sm">
-                        Optimized evacuation routes based on real-time
-                        conditions and infrastructure status.
-                      </p>
+                      <h3 className="text-[16px] font-semibold text-gray-900 mb-1">Evacuation Planning</h3>
+                      <p className="text-gray-600 text-sm">Optimized evacuation routes based on real-time conditions and infrastructure status.</p>
                     </div>
                   </div>
                 </div>
@@ -385,30 +341,41 @@ const Home = () => {
               <div className="w-full h-full md:w-1/2 relative ">
                 <div className="absolute inset-0 flex justify-center items-center ">
                   <div className="rounded-lg overflow-hidden">
-                    <img
-                      src={disasterimg1}
-                      alt="3D Visualization System"
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={disasterimg1} alt="3D Visualization System" className="w-full h-full object-cover" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
+
+        {/* Flood Prediction Section */}
+        <section className="py-16 bg-gradient-to-br from-green-50 to-emerald-100 relative overflow-hidden z-50">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">AI-Powered Flood Prediction</h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+                Use our advanced machine learning model to predict flood probability based on monsoon intensity, urbanization, and drainage systems.
+              </p>
+            </div>
+
+            <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
+              <div className="p-8">
+                <FloodPredictor />
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Statistics Section */}
         <StatsSection className="z-50" />
         {/* Technology Showcase */}
         <section className="py-8 bg-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">
-                Cutting-Edge Technology
-              </h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">Cutting-Edge Technology</h2>
               <p className="text-base text-gray-600 max-w-xl mx-auto">
-                Our disaster management platform integrates the latest
-                technologies to provide comprehensive emergency response
-                solutions.
+                Our disaster management platform integrates the latest technologies to provide comprehensive emergency response solutions.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -422,13 +389,9 @@ const Home = () => {
                     />
                   </div>
                   <div className="p-5">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      AI Prediction Systems
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">AI Prediction Systems</h3>
                     <p className="text-gray-600 text-sm ">
-                      Machine learning algorithms that analyze historical data
-                      and environmental factors to predict disaster occurrences
-                      and severity.
+                      Machine learning algorithms that analyze historical data and environmental factors to predict disaster occurrences and severity.
                     </p>
                   </div>
                 </div>
@@ -452,12 +415,9 @@ const Home = () => {
                     />
                   </div>
                   <div className="p-5">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Drone & Satellite Network
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Drone & Satellite Network</h3>
                     <p className="text-gray-600 text-sm mb-3">
-                      Comprehensive aerial monitoring system that provides
-                      real-time imagery and data from disaster-affected areas.
+                      Comprehensive aerial monitoring system that provides real-time imagery and data from disaster-affected areas.
                     </p>
                   </div>
                 </div>
@@ -481,12 +441,9 @@ const Home = () => {
                     />
                   </div>
                   <div className="p-5">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Mobile Command Centers
-                    </h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Mobile Command Centers</h3>
                     <p className="text-gray-600 text-sm mb-3">
-                      Deployable units equipped with advanced communication
-                      systems and technology for on-site disaster management.
+                      Deployable units equipped with advanced communication systems and technology for on-site disaster management.
                     </p>
                   </div>
                 </div>
@@ -507,11 +464,7 @@ const Home = () => {
         <section className="relative z-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
           {/* Top Wave */}
           <div className="mt-0">
-            <svg
-              className="w-full h-[80px] text-white"
-              viewBox="0 0 1440 320"
-              preserveAspectRatio="none"
-            >
+            <svg className="w-full h-[80px] text-white" viewBox="0 0 1440 320" preserveAspectRatio="none">
               <path
                 fill="currentColor"
                 d="M0,192L60,181.3C120,171,240,149,360,138.7C480,128,600,128,720,144C840,160,960,192,1080,186.7C1200,181,1320,139,1380,117.3L1440,96V0H0Z"
@@ -525,22 +478,16 @@ const Home = () => {
               <div className="max-w-3xl mx-auto text-center bg-white/5 p-10 rounded-2xl shadow-xl border border-white/10 backdrop-blur-md z-50">
                 <Quote className="text-4xl text-green-400 mb-6 mx-auto" />
                 <p className="text-xl text-slate-100 font-normal mb-8 leading-relaxed">
-                  "Disaster 3D visualization technology has revolutionized how
-                  we respond to emergencies. The predictive capabilities and
-                  real-time monitoring have saved countless lives during recent
-                  natural disasters."
+                  "Disaster 3D visualization technology has revolutionized how we respond to emergencies. The predictive capabilities and real-time
+                  monitoring have saved countless lives during recent natural disasters."
                 </p>
                 <div className="flex items-center justify-center gap-4">
                   <div className="w-14 h-14 bg-green-500/10 rounded-full flex items-center justify-center">
                     <User className="text-green-400 w-6 h-6" />
                   </div>
                   <div className="text-left">
-                    <h4 className="font-semibold text-white text-lg">
-                      Dr. Michael Chen
-                    </h4>
-                    <p className="text-sm text-slate-300">
-                      Director, National Emergency Response Center
-                    </p>
+                    <h4 className="font-semibold text-white text-lg">Dr. Michael Chen</h4>
+                    <p className="text-sm text-slate-300">Director, National Emergency Response Center</p>
                   </div>
                 </div>
               </div>
@@ -549,11 +496,7 @@ const Home = () => {
 
           {/* Bottom Wave */}
           <div className="">
-            <svg
-              className="w-full h-[80px] text-white"
-              viewBox="0 0 1440 320"
-              preserveAspectRatio="none"
-            >
+            <svg className="w-full h-[80px] text-white" viewBox="0 0 1440 320" preserveAspectRatio="none">
               <path
                 fill="currentColor"
                 d="M0,160L60,144C120,128,240,96,360,117.3C480,139,600,213,720,224C840,235,960,181,1080,154.7C1200,128,1320,128,1380,117.3L1440,107V320H0Z"
@@ -569,8 +512,7 @@ const Home = () => {
             <div
               className="w-full h-full"
               style={{
-                backgroundImage:
-                  "linear-gradient(#4ade80 1px, transparent 1px), linear-gradient(to right, #4ade80 1px, transparent 1px)",
+                backgroundImage: "linear-gradient(#4ade80 1px, transparent 1px), linear-gradient(to right, #4ade80 1px, transparent 1px)",
                 backgroundSize: "40px 40px",
               }}
             ></div>
@@ -582,12 +524,9 @@ const Home = () => {
               <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                 {/* Text */}
                 <div className="text-center md:text-left">
-                  <h2 className="text-xl md:text-2xl font-semibold text-white mb-2">
-                    Ready to enhance your disaster response?
-                  </h2>
+                  <h2 className="text-xl md:text-2xl font-semibold text-white mb-2">Ready to enhance your disaster response?</h2>
                   <p className="text-sm text-slate-300 max-w-xl">
-                    Join global organizations using our 3D disaster management
-                    platform for faster, smarter response and planning.
+                    Join global organizations using our 3D disaster management platform for faster, smarter response and planning.
                   </p>
                 </div>
 
@@ -611,46 +550,33 @@ const Home = () => {
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-lg max-w-lg p-6 shadow-lg relative">
-            <button
-              onClick={() => setIsOpen(false)}
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-            >
+            <button onClick={() => setIsOpen(false)} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
               ✕
             </button>
             {selectedFeature === "ai" && (
               <>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  AI Prediction Systems
-                </h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">AI Prediction Systems</h2>
                 <p className="text-sm text-gray-700 mb-2">
-                  Machine learning algorithms that analyze historical and
-                  environmental data to predict disasters before they happen.
-                  These systems help in issuing early warnings and making better
-                  preparedness plans.
+                  Machine learning algorithms that analyze historical and environmental data to predict disasters before they happen. These systems
+                  help in issuing early warnings and making better preparedness plans.
                 </p>
               </>
             )}
             {selectedFeature === "drone" && (
               <>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  Drone & Satellite Network
-                </h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Drone & Satellite Network</h2>
                 <p className="text-sm text-gray-700 mb-2">
-                  Our aerial systems provide real-time imagery and situational
-                  updates from affected zones, improving situational awareness
-                  and coordination.
+                  Our aerial systems provide real-time imagery and situational updates from affected zones, improving situational awareness and
+                  coordination.
                 </p>
               </>
             )}
             {selectedFeature === "mobile" && (
               <>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  Mobile Command Centers
-                </h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Mobile Command Centers</h2>
                 <p className="text-sm text-gray-700 mb-2">
-                  Fully equipped mobile units that serve as operational hubs
-                  during emergencies. They include communication, coordination,
-                  and surveillance tools.
+                  Fully equipped mobile units that serve as operational hubs during emergencies. They include communication, coordination, and
+                  surveillance tools.
                 </p>
               </>
             )}

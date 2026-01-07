@@ -1,12 +1,42 @@
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 import seaborn as sns
-import joblib  # <-- Add this line
+import joblib
 
-# Load the dataset
-df = pd.read_csv("C:\\Users\\ASUS\\prediction_flood\\flood.csv")
+# Create mock dataset for demonstration
+np.random.seed(42)
+n_samples = 1000
+
+# Generate synthetic flood prediction data
+data = {
+    'MonsoonIntensity': np.random.uniform(0, 10, n_samples),
+    'Urbanization': np.random.uniform(0, 10, n_samples),
+    'DrainageSystems': np.random.uniform(0, 10, n_samples),
+}
+
+# Create flood probability based on the factors (simplified model)
+# Higher monsoon intensity and urbanization increase flood risk
+# Better drainage systems decrease flood risk
+flood_probability = (
+    data['MonsoonIntensity'] * 0.3 +
+    data['Urbanization'] * 0.2 -
+    data['DrainageSystems'] * 0.15 +
+    np.random.normal(0, 0.1, n_samples)  # Add some noise
+)
+
+# Normalize to 0-1 range
+flood_probability = np.clip(flood_probability, 0, 1)
+
+# Create DataFrame
+df = pd.DataFrame({
+    'MonsoonIntensity': data['MonsoonIntensity'],
+    'Urbanization': data['Urbanization'],
+    'DrainageSystems': data['DrainageSystems'],
+    'FloodProbability': flood_probability
+})
 
 # Selected features based on your dataset
 selected_features = ["MonsoonIntensity", "Urbanization", "DrainageSystems"]
