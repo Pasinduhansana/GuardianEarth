@@ -56,7 +56,15 @@ function Register() {
 
   return (
     <div className=" min-h-screen relative overflow-hidden bg-gray-900">
-      <img src={bgimage} alt="" className="absolute w-full h-full object-cover blur-md " />
+      <motion.img
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        duration={1.5}
+        src={bgimage}
+        alt=""
+        className="absolute w-full h-full object-cover blur-md "
+      />
       <BackgroundBeams className="z-20 bg-white hidden" />
       {/* Diagonal divider */}
       <div
@@ -67,7 +75,7 @@ function Register() {
         }}
       />
       <div className="flex flex-row items-stretch w-full h-full p-10 min-h-screen  gap-0 max-h-screen rounded-[20px]  overflow-hidden relative">
-        <div className="rounded-[10px_0_0_10px] overflow-hidden drop-shadow-2xl border-[3px] border-white/10 ">
+        <div className="rounded-[10px_0_0_10px] overflow-hidden drop-shadow-2xl border-[3px] border-white/10 border-r-0">
           <div className="absolute inset-0 m-10 max-w-lg p-8 rounded-[10px] bg-black/30 text-left space-y-8 flex flex-col justify-between">
             {/* Animated Title and description */}
             <div className="flex flex-col space-y-4">
@@ -137,17 +145,17 @@ function Register() {
         </div>
 
         {/* Content container */}
-        <div className="flex items-center justify-end w-full relative min-w-[450px] max-w-4/12 shadow-lg border-[3px] border-white/10">
+        <div className="flex items-center max-w-md justify-end w-full relative min-w-[450px] max-w-4/12 shadow-lg border-[3px] border-white/10 border-l-0">
           <div className="w-full h-full  max-w-3xl ">
             {/* Form card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="bg-white/95 backdrop-blur-sm rounded-[0_10px_10px_0] h-full flex flex-col justify-center  shadow-2xl p-8 relative"
+              className="bg-white backdrop-blur-sm rounded-[0_10px_10px_0] h-full flex flex-col justify-center  shadow-2xl p-8 relative"
             >
               <div className="text-centertext-center max-w-lg mx-auto">
-                <ShieldCheck className="mx-auto h-12 w-12 text-green-600 -my-3" />
+                <ShieldCheck className="mx-auto h-16 w-16 text-green-600 -my-3" />
                 <h2 className="mt-6 text-3xl font-bold text-gray-900">Create Account</h2>
                 <p className="mt-1 text-sm text-gray-600">Join the Disaster Response Network</p>
               </div>
