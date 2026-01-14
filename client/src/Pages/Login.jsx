@@ -31,7 +31,11 @@ function Login() {
       // Redirect or show success
 
       toast.success("Login successful", res.data);
-      navigate("/");
+      if (user.role === "admin") {
+        navigate("/admin/Dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       console.error("Login error:", err.response?.data || err.message);
       toast.error("Login error:", err.response?.data || err.message);
@@ -83,11 +87,11 @@ function Login() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="font-proxima font-extrabold text-[3.2rem] leading-tight tracking-tight hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]
-                animate-none duration-200 text-white/90 drop-shadow-lg"
+                animate-none duration-200 text-white/90 drop-shadow-lg select-none"
               >
-                Prepared Today.
+                Learn Today.
                 <br />
-                Protected Tomorrow.
+                Survive Tomorrow.
               </motion.h1>
 
               {/* Animated Subtitle */}

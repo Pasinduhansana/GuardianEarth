@@ -21,9 +21,9 @@ import default_profile from "../../assets/profile.png";
 function Navbar() {
   const { isModalOpen } = useModal();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeLink, setActiveLink] = useState("Home");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -33,6 +33,21 @@ function Navbar() {
   const navbarAreaRef = useRef(null);
 
   const isHome = location.pathname === "/";
+
+  // Determine active link based on current pathname
+  const getActiveLink = () => {
+    const pathname = location.pathname;
+    if (pathname === "/") return "Home";
+    if (pathname === "/Disaster") return "Disaster";
+    if (pathname === "/admin/Disaster") return "Disaster";
+    if (pathname === "/Funding" || pathname === "/admin/payments") return "Funding";
+    if (pathname === "/Community" || pathname === "/admin/posts") return "Community";
+    if (pathname === "/admin/Dashboard") return "Dashboard";
+    if (pathname === "/User-management") return "User Management";
+    return "Home";
+  };
+
+  const activeLink = getActiveLink();
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -177,7 +192,6 @@ function Navbar() {
                   <button
                     key={item.name}
                     onClick={() => {
-                      setActiveLink(item.name);
                       navigate(item.link);
                     }}
                     className={`flex items-center space-x-1 px-3 py-1.5 rounded-full transition-all duration-200
@@ -188,9 +202,7 @@ function Navbar() {
                       }`}
                   >
                     {item.icon}
-                    <span className="hidden sm:inline text-sm">
-                      {item.name}
-                    </span>
+                    <span className="hidden sm:inline text-sm">{item.name}</span>
                   </button>
                 ))}
               </div>
@@ -218,12 +230,8 @@ function Navbar() {
 
                         {/* User Info */}
                         <div className="flex flex-col text-left">
-                          <p className="text-sm font-medium text-gray-800">
-                            Hi, {user?.name}
-                          </p>
-                          <p className="text-xs text-gray-500 capitalize">
-                            {user?.role}
-                          </p>
+                          <p className="text-sm font-medium text-gray-800">Hi, {user?.name}</p>
+                          <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
                         </div>
                       </div>
 

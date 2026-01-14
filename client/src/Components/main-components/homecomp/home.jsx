@@ -13,11 +13,12 @@ import { ArrowRight } from "lucide-react";
 import { Quote, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import { AlertTriangle, MapPin, TrendingUp, ShieldCheck, AlertCircle, NotebookPen } from "lucide-react";
+import { AlertTriangle, MapPin, TrendingUp, ShieldCheck, AlertCircle, NotebookPen, Calendar, Users, Clock } from "lucide-react";
 import StatsSection from "./StatSection";
 import Footer from "./footer";
 import FloodPredictor from "../prediction-model/FloodPredictor";
 import { use } from "react";
+import axios from "axios";
 
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,6 +26,8 @@ const Home = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeEmergency, setActiveEmergency] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState(null);
+  const [latestDisasters, setLatestDisasters] = useState([]);
+  const [loadingDisasters, setLoadingDisasters] = useState(true);
   const navigate = useNavigate();
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -47,6 +50,36 @@ const Home = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchLatestDisasters = async () => {
+      try {
+        setLoadingDisasters(true);
+        const response = await axios.get("http://localhost:5000/api/disaster");
+        console.log("API response:", response.data);
+
+        const disastersArray = Array.isArray(response.data) ? response.data : response.data.disasters || [];
+
+        console.log("Disasters array:", disastersArray);
+
+        // Filter approved disasters and get the latest 3
+        const approvedDisasters = disastersArray
+          .filter((disaster) => disaster.status === "Approved")
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, 3);
+
+        console.log("Approved disasters:", approvedDisasters);
+
+        setLatestDisasters(approvedDisasters);
+      } catch (error) {
+        console.error("Error fetching disasters:", error);
+      } finally {
+        setLoadingDisasters(false);
+      }
+    };
+
+    fetchLatestDisasters();
   }, []);
 
   const emergencyTypes = [
@@ -104,7 +137,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-white relative">
+      <div className="min-h-screen bg-white relative ">
         {/* Grid Background */}
         <div className="absolute inset-0 z-10 opacity-10">
           <div
@@ -120,8 +153,8 @@ const Home = () => {
           ></div>
         </div>
         {/* Hero Section */}
-        <section className="relative min-h-screen flex text-left items-center pt-20 pb-4">
-          <div className="container mx-auto px-4 z-10 flex flex-col md:flex-row items-center select-none">
+        <section className="relative min-h-screen flex text-left items-center pt-20 pb-4 px-10">
+          <div className="container mx-auto px-4 z-10 -mt-16 flex flex-col md:flex-row items-center select-none">
             <div className="w-full md:w-1/2 text-gray-900 mb-10 md:mb-0">
               <div className="relative mb-6">
                 <span className="absolute -top-8 left-0 bg-green-100 text-green-500 text-xs font-medium px-3 py-1 rounded-full shadow-sm">
@@ -153,50 +186,36 @@ const Home = () => {
                   <FaArrowRight className=" transition-transform group-hover:translate-x-[2px] duration-100 mt-[0.5px] mx-[5px]" />
                 </button>
               </div>
-              <div className="mt-20 flex items-center">
-                <div className="flex -space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border border-white shadow-sm">
-                    <FaUserShield className="text-blue-500 text-xs" />
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center border border-white shadow-sm">
-                    <FaUserShield className="text-green-500 text-xs" />
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center border border-white shadow-sm">
-                    <FaUserShield className="text-yellow-500 text-xs" />
-                  </div>
-                </div>
-                <span className="ml-3 text-[13px] text-gray-400">Trusted by 200+ emergency response teams worldwide</span>
-              </div>
             </div>
 
             <img
               src={world_globe}
               alt="3D Disaster Monitoring System"
-              className="absolute w-32 h-32 right-[10%] top-[20%] blur-[6px] opacity-75 -mt-14 object-cover animate-spin-slow"
+              className="absolute w-32 h-32  right-[10%] top-[20%] blur-[6px] opacity-75 -mt-14 object-cover animate-spin-slow"
             />
 
             <img
               src={world_globe}
               alt="3D Disaster Monitoring System"
-              className="absolute w-40 h-40 right-[38%] bottom-[20%] blur-[10px] opacity-85 -mt-14 object-cover animate-spin-slow"
+              className="absolute w-40 h-40  right-[38%] bottom-[20%] blur-[10px] opacity-85 -mt-14 object-cover animate-spin-slow"
             />
 
             <img
               src={world_globe}
               alt="3D Disaster Monitoring System"
-              className="absolute w-32 h-32 right-[10%] bottom-[20%] blur-[30px] opacity-100 -mt-14 object-cover animate-spin-slow"
+              className="absolute w-32 h-32  right-[10%] bottom-[20%] blur-[30px] opacity-100 -mt-14 object-cover animate-spin-slow"
             />
 
             <img
               src={world_globe}
               alt="3D Disaster Monitoring System"
-              className="absolute w-32 h-32 left-[0%] bottom-[30%] z-0 blur-[30px] opacity-100 -mt-14 object-cover animate-spin-slow"
+              className="absolute w-32 h-32  left-[0%] bottom-[30%] z-0 blur-[30px] opacity-100 -mt-14 object-cover animate-spin-slow"
             />
 
             <img
               src={world_globe}
               alt="3D Disaster Monitoring System"
-              className="absolute w-16 h-16 left-[18%] top-[18%] z-0 blur-[10px] opacity-40 -mt-14 object-cover animate-spin-slow"
+              className="absolute w-16 h-16  left-[18%] top-[18%] z-0 blur-[10px] opacity-40 -mt-14 object-cover animate-spin-slow"
             />
 
             <div className="absolute top-[25%] right-[5%] z-30">
@@ -292,14 +311,30 @@ const Home = () => {
               `}</style>
             </div>
           </div>
+
+          <div className="absolute md:w-1/2 bottom-10 left-10 h-auto flex items-center px-4">
+            <div className="flex -space-x-2">
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border border-white shadow-sm">
+                <FaUserShield className="text-blue-500 text-xs" />
+              </div>
+              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center border border-white shadow-sm">
+                <FaUserShield className="text-green-500 text-xs" />
+              </div>
+              <div className="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center border border-white shadow-sm">
+                <FaUserShield className="text-yellow-500 text-xs" />
+              </div>
+            </div>
+            <span className="ml-3 text-[13px] text-gray-400">Trusted by 200+ emergency response teams worldwide</span>
+          </div>
         </section>
 
         {/* Emergency Types Section */}
-        <section className="py-8 bg-white relative overflow-hidden">
+        <section className="py-8 bg-white relative overflow-hidden px-10">
           <EmergencyResponseSection emergencyTypes={emergencyTypes} activeEmergency={activeEmergency} setActiveEmergency={setActiveEmergency} />
         </section>
+
         {/* 3D Visualization Section */}
-        <section className="py-[68px] h-auto  relative overflow-hidden">
+        <section className="py-[68px] h-auto  relative overflow-hidden px-10">
           <div className="container mx-auto h-auto px-4 relative z-10">
             <div className="flex flex-col md:flex-row items-center">
               <div className="w-full md:w-1/2 mb-10 md:mb-0 md:pr-10">
@@ -350,11 +385,11 @@ const Home = () => {
         </section>
 
         {/* Flood Prediction Section */}
-        <section className="py-16 bg-gradient-to-br from-green-50 to-emerald-100 relative overflow-hidden z-50">
+        <section className="py-16 bg-white relative overflow-hidden z-50 px-10 mt-10">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">AI-Powered Flood Prediction</h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">AI-Powered Flood Prediction</h2>
+              <p className="text-base text-gray-600 max-w-2xl mx-auto mb-8">
                 Use our advanced machine learning model to predict flood probability based on monsoon intensity, urbanization, and drainage systems.
               </p>
             </div>
@@ -368,9 +403,10 @@ const Home = () => {
         </section>
 
         {/* Statistics Section */}
-        <StatsSection className="z-50" />
+        <StatsSection className="z-50 px-10" />
+
         {/* Technology Showcase */}
-        <section className="py-8 bg-white">
+        <section className="py-8 bg-white px-10">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-3">Cutting-Edge Technology</h2>
@@ -460,6 +496,132 @@ const Home = () => {
             </div>
           </div>
         </section>
+
+        {/* Latest Disasters Section */}
+        <section className="py-16 b relative overflow-hidden px-10">
+          <div className="container mx-auto px-4 relative z-10">
+            {/* Section Header */}
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">Latest Disasters</h2>
+              <p className="text-base text-gray-600 max-w-xl mx-auto">
+                Real-time updates on recent disaster events and emergency situations being monitored
+              </p>
+            </div>
+
+            {/* Disasters Grid */}
+            {loadingDisasters ? (
+              <div className="flex justify-center items-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
+              </div>
+            ) : latestDisasters.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {latestDisasters.map((disaster) => (
+                  <div
+                    key={disaster._id}
+                    className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 group"
+                  >
+                    {/* Disaster Image */}
+                    <div className="h-48 overflow-hidden bg-gray-100">
+                      {disaster.images && disaster.images.length > 0 ? (
+                        <img
+                          src={disaster.images[0]}
+                          alt={disaster.disasterType}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                          <AlertTriangle className="w-16 h-16 text-gray-400" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="p-5">
+                      {/* Disaster Type & Severity */}
+                      <div className="flex items-center justify-between mb-3">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            disaster.disasterType === "Flood"
+                              ? "bg-blue-100 text-blue-600"
+                              : disaster.disasterType === "Fire"
+                                ? "bg-red-100 text-red-600"
+                                : disaster.disasterType === "Earthquake"
+                                  ? "bg-yellow-100 text-yellow-600"
+                                  : "bg-purple-100 text-purple-600"
+                          }`}
+                        >
+                          {disaster.disasterType}
+                        </span>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            disaster.severity === "High"
+                              ? "bg-red-100 text-red-600"
+                              : disaster.severity === "Medium"
+                                ? "bg-yellow-100 text-yellow-600"
+                                : "bg-green-100 text-green-600"
+                          }`}
+                        >
+                          {disaster.severity}
+                        </span>
+                      </div>
+
+                      {/* Location */}
+                      <div className="flex items-center text-gray-600 mb-2">
+                        <MapPin className="w-4 h-4 mr-2 text-green-500" />
+                        <span className="text-sm font-medium">{disaster.location}</span>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{disaster.description}</p>
+
+                      {/* Date & People Affected */}
+                      <div className="flex items-center justify-between text-xs text-gray-500 mb-3 pb-3 border-b border-gray-100">
+                        <div className="flex items-center">
+                          <Calendar className="w-3 h-3 mr-1" />
+                          {new Date(disaster.date).toLocaleDateString()}
+                        </div>
+                        <div className="flex items-center">
+                          <Users className="w-3 h-3 mr-1" />
+                          {disaster.peopleAffected || 0} affected
+                        </div>
+                      </div>
+
+                      {/* Reporter Info */}
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                          <User className="w-4 h-4 text-green-600" />
+                        </div>
+                        <div className="text-xs">
+                          <p className="text-gray-900 font-medium">{disaster.reporterName || "Anonymous"}</p>
+                          <p className="text-gray-500">Reporter</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <AlertTriangle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">No disasters reported yet</p>
+              </div>
+            )}
+
+            {/* View All Button */}
+            {latestDisasters.length > 0 && (
+              <div className="text-center">
+                <button
+                  onClick={() => navigate("/Disaster", { state: { fromHome: true, activeTab: "disasters" } })}
+                  className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md transition-all duration-300 text-sm font-medium shadow-md inline-flex items-center group"
+                >
+                  View All Disasters
+                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+
         {/* Testimonial Section */}
         <section className="relative z-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
           {/* Top Wave */}
@@ -477,7 +639,7 @@ const Home = () => {
             <div className="container mx-auto px-4">
               <div className="max-w-3xl mx-auto text-center bg-white/5 p-10 rounded-2xl shadow-xl border border-white/10 backdrop-blur-md z-50">
                 <Quote className="text-4xl text-green-400 mb-6 mx-auto" />
-                <p className="text-xl text-slate-100 font-normal mb-8 leading-relaxed">
+                <p className="text-lg text-slate-100 font-normal mb-8 leading-relaxed">
                   "Disaster 3D visualization technology has revolutionized how we respond to emergencies. The predictive capabilities and real-time
                   monitoring have saved countless lives during recent natural disasters."
                 </p>
@@ -506,7 +668,7 @@ const Home = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 bg-white relative overflow-hidden border-t border-gray-100">
+        <section className="py-16 bg-white relative overflow-hidden border-t border-gray-100 px-10">
           {/* Grid Background */}
           <div className="absolute inset-0 z-0 opacity-10">
             <div
@@ -519,8 +681,8 @@ const Home = () => {
           </div>
 
           {/* Content */}
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-4xl mx-auto bg-slate-900/90 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-white/10">
+          <div className="container mx-auto px-10 relative z-10">
+            <div className="max-w-6xl mx-auto bg-slate-900/90 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-white/10">
               <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                 {/* Text */}
                 <div className="text-center md:text-left">
@@ -549,35 +711,75 @@ const Home = () => {
       {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-lg max-w-lg p-6 shadow-lg relative">
+          <div className="bg-white rounded-lg max-w-3xl p-6 shadow-lg relative">
             <button onClick={() => setIsOpen(false)} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
               ✕
             </button>
             {selectedFeature === "ai" && (
               <>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">AI Prediction Systems</h2>
-                <p className="text-sm text-gray-700 mb-2">
-                  Machine learning algorithms that analyze historical and environmental data to predict disasters before they happen. These systems
-                  help in issuing early warnings and making better preparedness plans.
-                </p>
+                <div className="flex flex-col">
+                  <div className="flex flex-row items-center gap-2">
+                    <img src={AIprediction} alt="AI Prediction" className="w-72 h-72 object-cover rounded-md" />
+                    {/* Verticle Seperater */}
+                    <div className="w-1 h-72 bg-gray-300 mx-4"></div>
+
+                    <div className="flex-col flex gap-6">
+                      <h2 className="text-xl font-bold text-gray-900 text-left">AI Prediction Systems</h2>
+                      <p className="text-sm text-left text-gray-700 mb-2">
+                        Machine learning algorithms that analyze historical and environmental data to predict disasters before they happen. These
+                        systems help in issuing early warnings and making better preparedness plans. <br />
+                        <br />
+                        By leveraging vast datasets, our AI models can identify patterns and trends that human analysis might miss, enabling more
+                        accurate and timely predictions.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
+
             {selectedFeature === "drone" && (
               <>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Drone & Satellite Network</h2>
-                <p className="text-sm text-gray-700 mb-2">
-                  Our aerial systems provide real-time imagery and situational updates from affected zones, improving situational awareness and
-                  coordination.
-                </p>
+                <div className="flex flex-col">
+                  <div className="flex flex-row items-center gap-2">
+                    <img src={droneimage} alt="Drone & Satellite Network" className="w-72 h-72 object-cover rounded-md" />
+                    {/* Vertical Separator */}
+                    <div className="w-1 h-72 bg-gray-300 mx-4"></div>
+
+                    <div className="flex-col flex gap-6">
+                      <h2 className="text-xl font-bold text-gray-900 text-left">Drone & Satellite Network</h2>
+                      <p className="text-sm text-left text-gray-700 mb-2">
+                        Our aerial systems provide real-time imagery and situational updates from affected zones, improving situational awareness and
+                        coordination. <br />
+                        <br />
+                        With advanced drone and satellite technology, we deliver continuous surveillance capabilities that enable emergency responders
+                        to make informed decisions quickly and effectively during critical situations.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
             {selectedFeature === "mobile" && (
               <>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Mobile Command Centers</h2>
-                <p className="text-sm text-gray-700 mb-2">
-                  Fully equipped mobile units that serve as operational hubs during emergencies. They include communication, coordination, and
-                  surveillance tools.
-                </p>
+                <div className="flex flex-col">
+                  <div className="flex flex-row items-center gap-2">
+                    <img src={mobileCommandimage} alt="Mobile Command Centers" className="w-72 h-72 object-cover rounded-md" />
+                    {/* Vertical Separator */}
+                    <div className="w-1 h-72 bg-gray-300 mx-4"></div>
+
+                    <div className="flex-col flex gap-6">
+                      <h2 className="text-xl font-bold text-gray-900 text-left">Mobile Command Centers</h2>
+                      <p className="text-sm text-left text-gray-700 mb-2">
+                        Fully equipped mobile units that serve as operational hubs during emergencies. They include advanced communication,
+                        coordination, and surveillance tools. <br />
+                        <br />
+                        These deployable command centers bring critical infrastructure directly to disaster zones, enabling field teams to coordinate
+                        response efforts efficiently and maintain real-time communication with central operations.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
           </div>

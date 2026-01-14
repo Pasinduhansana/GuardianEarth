@@ -73,6 +73,7 @@ export const UserManagement = () => {
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const PAGE_SIZE = 5;
 
@@ -109,12 +110,10 @@ export const UserManagement = () => {
       }, {});
 
       // Convert grouped data into an array for rendering
-      const countryData = Object.entries(groupedByCountry).map(
-        ([country, count]) => ({
-          country,
-          count,
-        })
-      );
+      const countryData = Object.entries(groupedByCountry).map(([country, count]) => ({
+        country,
+        count,
+      }));
 
       setUsers(users);
       setUsersByCountry(countryData);
@@ -140,11 +139,7 @@ export const UserManagement = () => {
       );
 
       setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user._id === userId
-            ? { ...user, status: action === "activate" ? "Active" : "Inactive" }
-            : user
-        )
+        prevUsers.map((user) => (user._id === userId ? { ...user, status: action === "activate" ? "Active" : "Inactive" } : user))
       );
 
       // Update the selectedUser state if the modal is open
@@ -172,18 +167,13 @@ export const UserManagement = () => {
             <button
               onClick={async () => {
                 try {
-                  const response = await axios.delete(
-                    `http://localhost:5000/api/auth/users/${userId}`,
-                    {
-                      headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                      },
-                    }
-                  );
+                  const response = await axios.delete(`http://localhost:5000/api/auth/users/${userId}`, {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                  });
 
-                  setUsers((prevUsers) =>
-                    prevUsers.filter((user) => user._id !== userId)
-                  );
+                  setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
 
                   // Close the modal if the deleted user is currently selected
                   if (selectedUser && selectedUser._id === userId) {
@@ -238,11 +228,7 @@ export const UserManagement = () => {
       );
 
       // Update the user list with the updated user details
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user._id === selectedUser._id ? { ...user, ...response.data } : user
-        )
-      );
+      setUsers((prevUsers) => prevUsers.map((user) => (user._id === selectedUser._id ? { ...user, ...response.data } : user)));
 
       toast.success("User updated successfully");
       fetchUsers();
@@ -291,20 +277,13 @@ export const UserManagement = () => {
   }, [filteredUsers, sortConfig]);
 
   // Pagination
-  const paginatedUsers = sortedUsers.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE
-  );
+  const paginatedUsers = sortedUsers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const pageCount = Math.ceil(sortedUsers.length / PAGE_SIZE);
 
   const requestSort = (key) => {
     let direction = "ascending";
-    if (
-      sortConfig &&
-      sortConfig.key === key &&
-      sortConfig.direction === "ascending"
-    ) {
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === "ascending") {
       direction = "descending";
     }
 
@@ -316,11 +295,7 @@ export const UserManagement = () => {
       return null;
     }
 
-    return sortConfig.direction === "ascending" ? (
-      <SortAsc className="h-4 w-4" />
-    ) : (
-      <SortDesc className="h-4 w-4" />
-    );
+    return sortConfig.direction === "ascending" ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />;
   };
 
   const handleUserSelect = (user) => {
@@ -337,26 +312,17 @@ export const UserManagement = () => {
 
   return (
     <>
-      <motion.div
-        className="space-y-6 px-10 pt-5"
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-      >
+      <motion.div className="space-y-6 px-10 pt-5" initial="hidden" animate="visible" variants={containerVariants}>
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between text-left">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              User Management
-            </h1>
-            <p className="text-gray-500 text-[14px]">
-              Manage your organization's users, roles, and permissions
-            </p>
+            <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+            <p className="text-gray-500 text-[14px]">Manage your organization's users, roles, and permissions</p>
           </div>
           <div className="mt-4 md:mt-0">
             <Button
-              leftIcon={<UserPlus className="h-4 w-4" />}
-              variant="primary"
+              leftIcon={<UserPlus className="h-5 w-5" />}
+              className="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2"
             >
               Add New User
             </Button>
@@ -367,27 +333,21 @@ export const UserManagement = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
           <MotionCard
             variants={itemVariants}
-            className="bg-white hover:shadow-lg transition-all duration-300"
-            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="bg-gradient-to-br from-white to-green-50 hover:shadow-xl transition-all duration-300 border border-green-100"
+            whileHover={{ y: -5, scale: 1.02, transition: { duration: 0.2 } }}
           >
-            <CardContent className="p-4">
+            <CardContent className="p-6">
               <div className="flex justify-between items-center text-left">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Total Users
-                  </p>
-                  <p className="mt-1 text-3xl font-bold text-gray-900">
-                    {filteredUsers.length}
-                  </p>
-                  <div className="mt-1 flex items-center text-sm text-emerald-600">
-                    <span className="font-medium">
-                      +{userStats.userGrowthRate}%
-                    </span>
-                    <span className="ml-1">from last month</span>
+                  <p className="text-sm font-medium text-gray-600">Total Users</p>
+                  <p className="mt-2 text-3xl font-bold text-gray-900">{filteredUsers.length}</p>
+                  <div className="mt-2 flex items-center text-sm text-green-600">
+                    <span className="font-semibold">+{userStats.userGrowthRate}%</span>
+                    <span className="ml-1 text-gray-500">from last month</span>
                   </div>
                 </div>
-                <div className="p-2 bg-emerald-100 rounded-lg ">
-                  <UsersIcon className="h-6 w-6 text-emerald-600" />
+                <div className="p-3 bg-green-500 rounded-xl shadow-lg">
+                  <UsersIcon className="h-7 w-7 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -395,37 +355,23 @@ export const UserManagement = () => {
 
           <MotionCard
             variants={itemVariants}
-            className="bg-white hover:shadow-lg transition-all duration-300"
-            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="bg-gradient-to-br from-white to-green-50 hover:shadow-xl transition-all duration-300 border border-green-100"
+            whileHover={{ y: -5, scale: 1.02, transition: { duration: 0.2 } }}
           >
-            <CardContent className="p-4">
+            <CardContent className="p-6">
               <div className="flex justify-between items-center text-left">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Active Users
-                  </p>
-                  <p className="mt-1 text-3xl font-bold text-gray-900">
-                    {
-                      filteredUsers.filter((user) => user.status === "Active")
-                        .length
-                    }
-                  </p>
-                  <div className="mt-1 flex items-center text-sm">
-                    <span className="text-emerald-600 font-medium">
-                      {Math.round(
-                        (filteredUsers.filter(
-                          (user) => user.status === "Active"
-                        ).length /
-                          filteredUsers.length) *
-                          100
-                      )}
-                      %
+                  <p className="text-sm font-medium text-gray-600">Active Users</p>
+                  <p className="mt-2 text-3xl font-bold text-gray-900">{filteredUsers.filter((user) => user.status === "Active").length}</p>
+                  <div className="mt-2 flex items-center text-sm">
+                    <span className="text-green-600 font-semibold">
+                      {Math.round((filteredUsers.filter((user) => user.status === "Active").length / filteredUsers.length) * 100)}%
                     </span>
                     <span className="ml-1 text-gray-500">of total users</span>
                   </div>
                 </div>
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <UserRoundCheck className="h-6 w-6 text-green-600" />
+                <div className="p-3 bg-green-500 rounded-xl shadow-lg">
+                  <UserRoundCheck className="h-7 w-7 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -433,37 +379,23 @@ export const UserManagement = () => {
 
           <MotionCard
             variants={itemVariants}
-            className="bg-white hover:shadow-lg transition-all duration-300"
-            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="bg-gradient-to-br from-white to-gray-50 hover:shadow-xl transition-all duration-300 border border-gray-200"
+            whileHover={{ y: -5, scale: 1.02, transition: { duration: 0.2 } }}
           >
-            <CardContent className="p-4">
+            <CardContent className="p-6">
               <div className="flex justify-between items-center text-left">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Inactive Users
-                  </p>
-                  <p className="mt-1 text-3xl font-bold text-gray-900">
-                    {
-                      filteredUsers.filter((user) => user.status === "Inactive")
-                        .length
-                    }
-                  </p>
-                  <div className="mt-1 flex items-center text-sm">
-                    <span className="text-green-600 font-medium">
-                      {Math.round(
-                        (filteredUsers.filter(
-                          (user) => user.status === "Inactive"
-                        ).length /
-                          filteredUsers.length) *
-                          100
-                      )}
-                      %
+                  <p className="text-sm font-medium text-gray-600">Inactive Users</p>
+                  <p className="mt-2 text-3xl font-bold text-gray-900">{filteredUsers.filter((user) => user.status === "Inactive").length}</p>
+                  <div className="mt-2 flex items-center text-sm">
+                    <span className="text-gray-600 font-semibold">
+                      {Math.round((filteredUsers.filter((user) => user.status === "Inactive").length / filteredUsers.length) * 100)}%
                     </span>
                     <span className="ml-1 text-gray-500">of total users</span>
                   </div>
                 </div>
-                <div className="p-2 bg-gray-100 rounded-lg">
-                  <UserX className="h-6 w-6 text-gray-600" />
+                <div className="p-3 bg-gray-400 rounded-xl shadow-lg">
+                  <UserX className="h-7 w-7 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -471,34 +403,30 @@ export const UserManagement = () => {
 
           <MotionCard
             variants={itemVariants}
-            className="bg-white hover:shadow-lg transition-all duration-300"
-            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="bg-gradient-to-br from-white to-green-50 hover:shadow-xl transition-all duration-300 border border-green-100"
+            whileHover={{ y: -5, scale: 1.02, transition: { duration: 0.2 } }}
           >
-            <CardContent className="p-4">
+            <CardContent className="p-6">
               <div className="flex justify-between items-center text-left">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">New Today</p>
-                  <p className="mt-1 text-3xl font-bold text-gray-900">
+                  <p className="text-sm font-medium text-gray-600">New Today</p>
+                  <p className="mt-2 text-3xl font-bold text-gray-900">
                     {
                       filteredUsers.filter((user) => {
                         const today = new Date().toISOString().split("T")[0];
                         if (!user.joinDate) return false; // Skip users without a joinDate
-                        const userJoinDate = new Date(user.joinDate)
-                          .toISOString()
-                          .split("T")[0];
+                        const userJoinDate = new Date(user.joinDate).toISOString().split("T")[0];
                         return userJoinDate === today;
                       }).length
                     }
                   </p>
-                  <div className="mt-1 flex items-center text-sm ">
-                    <span className="text-green-600 font-medium">
+                  <div className="mt-2 flex items-center text-sm ">
+                    <span className="text-green-600 font-semibold">
                       {Math.round(
                         (filteredUsers.filter((user) => {
                           const today = new Date().toISOString().split("T")[0];
                           if (!user.joinDate) return false; // Skip users without a joinDate
-                          const userJoinDate = new Date(user.joinDate)
-                            .toISOString()
-                            .split("T")[0];
+                          const userJoinDate = new Date(user.joinDate).toISOString().split("T")[0];
                           return userJoinDate === today;
                         }).length /
                           filteredUsers.length) *
@@ -510,8 +438,8 @@ export const UserManagement = () => {
                     <span className="ml-1 text-gray-500">Joined today</span>
                   </div>
                 </div>
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Calendar className="h-6 w-6 text-blue-600" />
+                <div className="p-3 bg-green-500 rounded-xl shadow-lg">
+                  <Calendar className="h-7 w-7 text-white" />
                 </div>
               </div>
             </CardContent>
@@ -521,44 +449,54 @@ export const UserManagement = () => {
         {/* Filter & Search */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-3 flex-1">
-            <div className="w-full md:w-64">
-              <Input
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 outline-none h-[30px]"
-                leftIcon={<Search className="h-4 w-4 text-gray-400 " />}
-              />
+            <div className="w-full md:w-80">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search by name, email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2.5 border h-[38px] border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+                />
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <div className="relative">
-                <Button
-                  leftIcon={<Filter className="h-4 w-4" />}
-                  rightIcon={<ChevronDown className="h-4 w-4" />}
-                  variant="outline"
-                  size="sm"
+                <button
                   onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-                  className="text-gray-600"
+                  className="flex items-center h-[38px] gap-2 px-4 py-2.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 focus:outline-none focus:ring-0 focus:ring-green-500"
                 >
-                  Status: {statusFilter || "All"}
-                </Button>
+                  <Filter className="h-4 w-4" />
+                  <span>Status: {statusFilter || "All"}</span>
+                  <ChevronDown className="h-4 w-4" />
+                </button>
                 {showStatusDropdown && (
-                  <div className="absolute mt-2 bg-white border text-gray-600 text-[13px] rounded shadow-lg z-10">
+                  <div className="absolute mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                     <div
-                      className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      onClick={() => setStatusFilter(null)}
+                      className="px-4 py-2.5 cursor-pointer hover:bg-green-50 text-sm text-gray-700 rounded-t-lg transition-colors"
+                      onClick={() => {
+                        setStatusFilter(null);
+                        setShowStatusDropdown(false);
+                      }}
                     >
-                      All
+                      All Statuses
                     </div>
                     <div
-                      className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      onClick={() => setStatusFilter("Active")}
+                      className="px-4 py-2.5 cursor-pointer hover:bg-green-50 text-sm text-gray-700 transition-colors"
+                      onClick={() => {
+                        setStatusFilter("Active");
+                        setShowStatusDropdown(false);
+                      }}
                     >
                       Active
                     </div>
                     <div
-                      className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      onClick={() => setStatusFilter("Inactive")}
+                      className="px-4 py-2.5 cursor-pointer hover:bg-green-50 text-sm text-gray-700 rounded-b-lg transition-colors"
+                      onClick={() => {
+                        setStatusFilter("Inactive");
+                        setShowStatusDropdown(false);
+                      }}
                     >
                       Inactive
                     </div>
@@ -567,51 +505,55 @@ export const UserManagement = () => {
               </div>
 
               <div className="relative">
-                <Button
-                  leftIcon={<Shield className="h-4 w-4" />}
-                  rightIcon={<ChevronDown className="h-4 w-4" />}
-                  variant="outline"
-                  className="text-gray-600"
-                  size="sm"
+                <button
                   onClick={() => setShowRoleDropdown(!showRoleDropdown)}
+                  className="flex items-center h-[38px] gap-2 px-4 py-2.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 focus:outline-none focus:ring-0 focus:ring-green-500"
                 >
-                  Role: {roleFilter || "All"}
-                </Button>
+                  <Shield className="h-4 w-4" />
+                  <span>Role: {roleFilter || "All"}</span>
+                  <ChevronDown className="h-4 w-4" />
+                </button>
                 {showRoleDropdown && (
-                  <div className="absolute mt-2 text-gray-600 bg-white border text-[13px] rounded shadow-lg z-10">
+                  <div className="absolute mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                     <div
-                      className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      onClick={() => setRoleFilter(null)}
+                      className="px-4 py-2.5 cursor-pointer hover:bg-green-50 text-sm text-gray-700 rounded-t-lg transition-colors"
+                      onClick={() => {
+                        setRoleFilter(null);
+                        setShowRoleDropdown(false);
+                      }}
                     >
-                      All
+                      All Roles
                     </div>
                     <div
-                      className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      onClick={() => setRoleFilter("admin")}
+                      className="px-4 py-2.5 cursor-pointer hover:bg-green-50 text-sm text-gray-700 transition-colors"
+                      onClick={() => {
+                        setRoleFilter("admin");
+                        setShowRoleDropdown(false);
+                      }}
                     >
                       Admin
                     </div>
                     <div
-                      className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                      onClick={() => setRoleFilter("user")}
+                      className="px-4 py-2.5 cursor-pointer hover:bg-green-50 text-sm text-gray-700 rounded-b-lg transition-colors"
+                      onClick={() => {
+                        setRoleFilter("user");
+                        setShowRoleDropdown(false);
+                      }}
                     >
-                      Users
+                      User
                     </div>
                   </div>
                 )}
               </div>
             </div>
           </div>
-          <Button
-            leftIcon={<RefreshCw className="h-4 w-4" />}
-            variant="secondary"
-            size="sm"
-            onClick={() => {
-              fetchUsers();
-            }}
+          <button
+            onClick={() => fetchUsers()}
+            className="flex items-center h-[38px] gap-2 px-4 py-2.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-green-50 hover:border-green-300 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-green-500"
           >
-            Refresh
-          </Button>
+            <RefreshCw className="h-4 w-4" />
+            <span>Refresh</span>
+          </button>
         </div>
 
         {/* User Table & Detail View */}
@@ -620,24 +562,15 @@ export const UserManagement = () => {
             <MotionCard variants={itemVariants} className="overflow-hidden">
               <CardHeader className="py-4">
                 <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    User List
-                  </h2>
-                  <Button
-                    leftIcon={<Download className="h-4 w-4" />}
-                    variant="outline"
-                    size="sm"
-                    onClick={handleExport}
-                  >
+                  <h2 className="text-lg font-semibold text-gray-900">User List</h2>
+                  <Button leftIcon={<Download className="h-4 w-4" />} variant="outline" size="sm" onClick={handleExport}>
                     Export
                   </Button>
                 </div>
               </CardHeader>
               {loading ? (
                 <div className="flex justify-center items-center h-screen">
-                  <p className="text-lg font-medium text-gray-600">
-                    Loading...
-                  </p>
+                  <p className="text-lg font-medium text-gray-600">Loading...</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -692,28 +625,18 @@ export const UserManagement = () => {
                     <tbody className="bg-white divide-y divide-gray-200">
                       {paginatedUsers.map((user) => (
                         <motion.tr
-                          key={user.id}
+                          key={user._id}
                           onClick={() => handleUserSelect(user)}
-                          whileHover={{
-                            backgroundColor: "rgba(243, 244, 246, 0.5)",
-                          }}
-                          className={`${selectedUser?.id === user.id ? "bg-emerald-50" : ""} cursor-pointer`}
+                          className={`${selectedUser?._id === user._id ? "border-l-4  border-green-500 bg-white" : "bg-white"} cursor-pointer transition-all duration-200 hover:bg-gray-50`}
                         >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10">
-                                <Avatar
-                                  src={user.profile_img}
-                                  name={user.name}
-                                />
+                                <Avatar src={user.profile_img} name={user.name} />
                               </div>
                               <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900">
-                                  {user.name}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {user.email}
-                                </div>
+                                <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                                <div className="text-sm text-gray-500">{user.email}</div>
                               </div>
                             </div>
                           </td>
@@ -743,15 +666,69 @@ export const UserManagement = () => {
                               {user.status}
                             </motion.span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-[12px] text-gray-500">
-                            {formatDate(user.last_active)}
-                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-[12px] text-gray-500">{formatDate(user.last_active)}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="relative">
-                              <Button variant="ghost" size="sm">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActiveDropdown(activeDropdown === user._id ? null : user._id);
+                                }}
+                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                              >
                                 <MoreVertical className="h-4 w-4 text-gray-400" />
-                              </Button>
-                              {/* We would add dropdown here in a real implementation */}
+                              </button>
+                              {activeDropdown === user._id && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleUserSelect(user);
+                                      setActiveDropdown(null);
+                                    }}
+                                    className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-green-50 flex items-center gap-2 rounded-t-lg transition-colors"
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                    View Details
+                                  </button>
+                                  {user.status === "Active" ? (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleUserStatus(user._id, "deactivate");
+                                        setActiveDropdown(null);
+                                      }}
+                                      className="w-full px-4 py-2.5 text-left text-sm text-amber-600 hover:bg-amber-50 flex items-center gap-2 transition-colors"
+                                    >
+                                      <UserX className="h-4 w-4" />
+                                      Deactivate
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleUserStatus(user._id, "activate");
+                                        setActiveDropdown(null);
+                                      }}
+                                      className="w-full px-4 py-2.5 text-left text-sm text-green-600 hover:bg-green-50 flex items-center gap-2 transition-colors"
+                                    >
+                                      <Check className="h-4 w-4" />
+                                      Activate
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      deleteUser(user._id);
+                                      setActiveDropdown(null);
+                                    }}
+                                    className="w-full px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 rounded-b-lg transition-colors"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    Delete
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </td>
                         </motion.tr>
@@ -763,20 +740,10 @@ export const UserManagement = () => {
 
               <div className="bg-white px-10 py-3  flex items-center justify-between border-t border-gray-200">
                 <div className="flex-1 flex justify-between sm:hidden">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={page === 1}
-                    onClick={() => setPage(page - 1)}
-                  >
+                  <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>
                     Previous
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={page === pageCount}
-                    onClick={() => setPage(page + 1)}
-                  >
+                  <Button variant="outline" size="sm" disabled={page === pageCount} onClick={() => setPage(page + 1)}>
                     Next
                   </Button>
                 </div>
@@ -784,24 +751,13 @@ export const UserManagement = () => {
                 <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm text-gray-700">
-                      Showing{" "}
-                      <span className="font-medium">
-                        {(page - 1) * PAGE_SIZE + 1}
-                      </span>{" "}
-                      to{" "}
-                      <span className="font-medium">
-                        {Math.min(page * PAGE_SIZE, sortedUsers.length)}
-                      </span>{" "}
-                      of{" "}
-                      <span className="font-medium">{sortedUsers.length}</span>{" "}
-                      users
+                      Showing <span className="font-medium">{(page - 1) * PAGE_SIZE + 1}</span> to{" "}
+                      <span className="font-medium">{Math.min(page * PAGE_SIZE, sortedUsers.length)}</span> of{" "}
+                      <span className="font-medium">{sortedUsers.length}</span> users
                     </p>
                   </div>
                   <div>
-                    <nav
-                      className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-                      aria-label="Pagination"
-                    >
+                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -817,10 +773,10 @@ export const UserManagement = () => {
                           variant={page === i + 1 ? "primary" : "ghost"}
                           size="sm"
                           onClick={() => setPage(i + 1)}
-                          className={`relative inline-flex items-center w-3 h-8 mx-1 px-4 outline-none py-2 text-sm font-medium ${
+                          className={`relative inline-flex items-center w-3 h-8 mx-1 px-4 outline-none py-2 text-sm font-medium transition-all duration-200 ${
                             page === i + 1
-                              ? "z-10 bg-emerald-50 border-emerald-500 text-emerald-600"
-                              : "text-gray-500 hover:bg-gray-50"
+                              ? "z-10 bg-green-500 text-white shadow-md hover:bg-green-600"
+                              : "text-gray-600 hover:bg-green-50 hover:text-green-600"
                           }`}
                         >
                           {i + 1}
@@ -844,22 +800,11 @@ export const UserManagement = () => {
 
           <div>
             {selectedUser ? (
-              <MotionCard
-                variants={itemVariants}
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
+              <MotionCard variants={itemVariants} initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.3 }}>
                 <CardHeader className="py-4 px-6">
                   <div className="flex justify-between items-center">
-                    <h2 className="text-lg font-semibold text-gray-900">
-                      User Details
-                    </h2>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedUser(null)}
-                    >
+                    <h2 className="text-lg font-semibold text-gray-900">User Details</h2>
+                    <Button variant="ghost" size="sm" onClick={() => setSelectedUser(null)}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
@@ -867,15 +812,9 @@ export const UserManagement = () => {
                 <CardContent className="px-6 py-4">
                   <div className="flex flex-col items-center mb-6">
                     <div className="mb-4">
-                      <Avatar
-                        src={selectedUser.avatar}
-                        name={selectedUser.name}
-                        size="lg"
-                      />
+                      <Avatar src={selectedUser.profile_img} name={selectedUser.name} size="lg" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">
-                      {selectedUser.name}
-                    </h3>
+                    <h3 className="text-xl font-bold text-gray-900">{selectedUser.name}</h3>
                     <p className="text-gray-500">{selectedUser.email}</p>
                     <div className="mt-2 flex space-x-2">
                       <motion.span
@@ -911,13 +850,9 @@ export const UserManagement = () => {
                           <MapPinHouse className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
 
                           <div>
-                            <p className="text-xs text-gray-500 mb-1">
-                              Country
-                            </p>
+                            <p className="text-xs text-gray-500 mb-1">Country</p>
 
-                            <p className="text-sm font-medium text-gray-900">
-                              {selectedUser?.Country}
-                            </p>
+                            <p className="text-sm font-medium text-gray-900">{selectedUser?.Country}</p>
                           </div>
                         </div>
                         <div className="flex items-start">
@@ -926,9 +861,7 @@ export const UserManagement = () => {
                           <div>
                             <p className="text-xs text-gray-500">Join Date</p>
 
-                            <p className="text-sm font-medium text-gray-900">
-                              {formatDate(selectedUser?.joinDate)}
-                            </p>
+                            <p className="text-sm font-medium text-gray-900">{formatDate(selectedUser?.joinDate)}</p>
                           </div>
                         </div>
                       </div>
@@ -938,9 +871,7 @@ export const UserManagement = () => {
 
                           <div>
                             <p className="text-xs text-gray-500">Last Active</p>
-                            <p className="text-sm font-medium text-gray-900">
-                              {formatDate(selectedUser?.last_active)}
-                            </p>
+                            <p className="text-sm font-medium text-gray-900">{formatDate(selectedUser?.last_active)}</p>
                           </div>
                         </div>
                         <div className="flex items-center">
@@ -948,9 +879,7 @@ export const UserManagement = () => {
 
                           <div>
                             <p className="text-xs text-gray-500">System Role</p>
-                            <p className="text-sm font-medium text-gray-900">
-                              {selectedUser?.role}
-                            </p>
+                            <p className="text-sm font-medium text-gray-900">{selectedUser?.role}</p>
                           </div>
                         </div>
                       </div>
@@ -960,7 +889,7 @@ export const UserManagement = () => {
                     <Button
                       leftIcon={<Edit className="h-4 w-4" />}
                       variant="outline"
-                      className="w-full text-[12px] h-full border mt-[15px] border-gray-300 hover:bg-gray-50"
+                      className="w-full text-[12px] h-full border mt-[15px] border-green-300 text-green-600 hover:bg-green-50 hover:border-green-400 transition-all duration-200"
                       onClick={() => {
                         setSelectedUser(selectedUser);
                         setIsEditModalOpen(true);
@@ -972,10 +901,8 @@ export const UserManagement = () => {
                       <Button
                         leftIcon={<UserX className="h-4 w-4" />}
                         variant="outline"
-                        className="w-full text-[12px]  h-full text-amber-600 border border-amber-200 hover:bg-amber-50"
-                        onClick={() =>
-                          toggleUserStatus(selectedUser._id, "deactivate")
-                        }
+                        className="w-full text-[12px]  h-full text-amber-600 border border-amber-300 hover:bg-amber-50 hover:border-amber-400 transition-all duration-200"
+                        onClick={() => toggleUserStatus(selectedUser._id, "deactivate")}
                       >
                         Deactivate
                       </Button>
@@ -983,10 +910,8 @@ export const UserManagement = () => {
                       <Button
                         leftIcon={<Check className="h-4 w-4" />}
                         variant="outline"
-                        className="w-full text-[12px]  h-full text-emerald-600 border border-emerald-200 hover:bg-emerald-50"
-                        onClick={() =>
-                          toggleUserStatus(selectedUser._id, "activate")
-                        }
+                        className="w-full text-[12px]  h-full text-green-600 border border-green-300 hover:bg-green-50 hover:border-green-400 transition-all duration-200"
+                        onClick={() => toggleUserStatus(selectedUser._id, "activate")}
                       >
                         Activate
                       </Button>
@@ -994,7 +919,7 @@ export const UserManagement = () => {
                     <Button
                       leftIcon={<Trash2 className="h-4 w-4" />}
                       variant="outline"
-                      className="w-full h-full text-red-600 border border-red-200 hover:bg-red-50"
+                      className="w-full h-full text-red-600 border border-red-300 hover:bg-red-50 hover:border-red-400 transition-all duration-200"
                       onClick={() => deleteUser(selectedUser._id)}
                     >
                       Delete
@@ -1003,32 +928,20 @@ export const UserManagement = () => {
                 </CardContent>
               </MotionCard>
             ) : (
-              <MotionCard
-                variants={itemVariants}
-                className="bg-white h-full flex flex-col"
-              >
+              <MotionCard variants={itemVariants} className="bg-white h-full flex flex-col">
                 <CardHeader className="py-4">
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    User Distribution
-                  </h2>
+                  <h2 className="text-lg font-semibold text-gray-900">User Distribution</h2>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col space-y-6">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-3">
-                      By Country
-                    </h3>
-                    <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-gray-500 mb-3">By Country</h3>
+                    <div className="space-y-3">
                       {usersByCountry.map((countryData) => (
-                        <div
-                          key={countryData.country}
-                          className="flex items-center"
-                        >
-                          <span className="text-sm text-right mr-1 text-gray-700 w-24 truncate">
-                            {countryData.country}
-                          </span>
-                          <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden ml-2">
+                        <div key={countryData.country} className="flex items-center group">
+                          <span className="text-sm text-right mr-1 text-gray-700 w-24 truncate font-medium">{countryData.country}</span>
+                          <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden ml-2">
                             <motion.div
-                              className="h-full bg-emerald-500 rounded-full"
+                              className="h-full bg-green-500 rounded-full"
                               initial={{ width: 0 }}
                               animate={{
                                 width: `${(countryData.count / Math.max(...usersByCountry.map((d) => d.count))) * 100}%`,
@@ -1036,50 +949,25 @@ export const UserManagement = () => {
                               transition={{ duration: 1, delay: 0.2 }}
                             />
                           </div>
-                          <span className="text-xs text-gray-500 ml-2 w-10 text-right">
-                            {countryData.count}
-                          </span>
+                          <span className="text-xs text-gray-600 ml-2 w-10 text-right font-semibold">{countryData.count}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-3">
-                      By Role
-                    </h3>
-                    <div className="grid grid-cols-2 gap-2">
+                    <h3 className="text-sm font-medium text-gray-500 mb-3">By Role</h3>
+                    <div className="grid grid-cols-2 gap-3">
                       {Object.entries(usersByRole).map(([role, count]) => (
-                        <div
+                        <motion.div
                           key={role}
-                          className={`p-3 rounded-lg border hover:shadow-md transition-all duration-300 ${
-                            role === "Admin"
-                              ? "border-purple-200 bg-purple-50"
-                              : role === "Editor"
-                                ? "border-blue-200 bg-blue-50"
-                                : role === "Viewer"
-                                  ? "border-teal-200 bg-teal-50"
-                                  : "border-gray-200 bg-gray-50"
-                          }`}
+                          whileHover={{ y: -2 }}
+                          className="p-5 rounded-lg bg-white border border-gray-200 hover:border-green-300 hover:shadow-md transition-all duration-200"
                         >
-                          <p
-                            className={`text-xs font-medium ${
-                              role === "Admin"
-                                ? "text-purple-800"
-                                : role === "Editor"
-                                  ? "text-blue-800"
-                                  : role === "Viewer"
-                                    ? "text-teal-800"
-                                    : "text-gray-800"
-                            }`}
-                          >
-                            {role}
-                          </p>
-                          <p className="text-lg font-bold text-gray-900 mt-1">
-                            {count}
-                          </p>
+                          <p className="text-xs font-semibold uppercase tracking-wide text-gray-600">{role}</p>
+                          <p className="text-2xl font-bold text-gray-900 mt-2">{count}</p>
                           <p className="text-xs text-gray-500 mt-1">users</p>
-                        </div>
+                        </motion.div>
                       ))}
                     </div>
                   </div>
@@ -1109,9 +997,7 @@ export const UserManagement = () => {
             <div className="space-y-4">
               {/* Name Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Name
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Name</label>
                 <Input
                   value={selectedUser?.name || ""}
                   onChange={(e) =>
@@ -1127,9 +1013,7 @@ export const UserManagement = () => {
 
               {/* Email Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Email
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Email</label>
                 <Input
                   value={selectedUser?.email || ""}
                   onChange={(e) =>
@@ -1145,15 +1029,13 @@ export const UserManagement = () => {
 
               {/* Country Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Email
-                </label>
+                <label className="block text-sm font-medium text-gray-700">Country</label>
                 <Input
                   value={selectedUser?.Country || ""}
                   onChange={(e) =>
                     setSelectedUser((prev) => ({
                       ...prev,
-                      email: e.target.value,
+                      Country: e.target.value,
                     }))
                   }
                   placeholder="Enter Country"
@@ -1163,9 +1045,7 @@ export const UserManagement = () => {
 
               {/* Role Field */}
               <div>
-                <label className="block text-sm font-medium  text-gray-700">
-                  Role
-                </label>
+                <label className="block text-sm font-medium  text-gray-700">Role</label>
                 <select
                   value={selectedUser?.role || ""}
                   onChange={(e) =>
