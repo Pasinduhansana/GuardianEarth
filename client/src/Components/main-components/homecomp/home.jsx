@@ -312,8 +312,8 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="absolute md:w-1/2 bottom-10 left-10 h-auto flex items-center px-4">
-            <div className="flex -space-x-2">
+          <div className="absolute md:w-1/2 bottom-10 left-10 h-auto flex items-center px-4 max-w-md">
+            <div className="flex -space-x-2 flex-shrink-0">
               <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border border-white shadow-sm">
                 <FaUserShield className="text-blue-500 text-xs" />
               </div>
@@ -324,7 +324,7 @@ const Home = () => {
                 <FaUserShield className="text-yellow-500 text-xs" />
               </div>
             </div>
-            <span className="ml-3 text-[13px] text-gray-400">Trusted by 200+ emergency response teams worldwide</span>
+            <span className="ml-3 text-[13px] text-gray-400 line-clamp-2">Trusted by 200+ emergency response teams worldwide</span>
           </div>
         </section>
 
@@ -498,12 +498,12 @@ const Home = () => {
         </section>
 
         {/* Latest Disasters Section */}
-        <section className="py-16 b relative overflow-hidden px-10">
-          <div className="container mx-auto px-4 relative z-10">
+        <section className="py-20 relative overflow-hidden bg-gradient-to-b from-gray-50 to-white">
+          <div className="max-w-[1600px] mx-auto px-6 lg:px-12 relative z-10">
             {/* Section Header */}
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">Latest Disasters</h2>
-              <p className="text-base text-gray-600 max-w-xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Latest Disasters</h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                 Real-time updates on recent disaster events and emergency situations being monitored
               </p>
             </div>
@@ -514,86 +514,97 @@ const Home = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
               </div>
             ) : latestDisasters.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
                 {latestDisasters.map((disaster) => (
                   <div
                     key={disaster._id}
-                    className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 group"
+                    className="relative overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-md hover:shadow-2xl transition-all duration-500 h-[480px] group cursor-pointer"
+                    style={{
+                      backgroundImage: disaster.images && disaster.images.length > 0 ? `url(${disaster.images[0]})` : "none",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }}
                   >
-                    {/* Disaster Image */}
-                    <div className="h-48 overflow-hidden bg-gray-100">
-                      {disaster.images && disaster.images.length > 0 ? (
-                        <img
-                          src={disaster.images[0]}
-                          alt={disaster.disasterType}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                          <AlertTriangle className="w-16 h-16 text-gray-400" />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Card Content */}
-                    <div className="p-5">
-                      {/* Disaster Type & Severity */}
-                      <div className="flex items-center justify-between mb-3">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            disaster.disasterType === "Flood"
-                              ? "bg-blue-100 text-blue-600"
-                              : disaster.disasterType === "Fire"
-                                ? "bg-red-100 text-red-600"
-                                : disaster.disasterType === "Earthquake"
-                                  ? "bg-yellow-100 text-yellow-600"
-                                  : "bg-purple-100 text-purple-600"
-                          }`}
-                        >
-                          {disaster.disasterType}
-                        </span>
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            disaster.severity === "High"
-                              ? "bg-red-100 text-red-600"
-                              : disaster.severity === "Medium"
-                                ? "bg-yellow-100 text-yellow-600"
-                                : "bg-green-100 text-green-600"
-                          }`}
-                        >
-                          {disaster.severity}
-                        </span>
+                    {/* Show placeholder if no image */}
+                    {(!disaster.images || disaster.images.length === 0) && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                        <AlertTriangle className="w-20 h-20 text-gray-400" />
                       </div>
+                    )}
 
-                      {/* Location */}
-                      <div className="flex items-center text-gray-600 mb-2">
-                        <MapPin className="w-4 h-4 mr-2 text-green-500" />
-                        <span className="text-sm font-medium">{disaster.location}</span>
-                      </div>
+                    {/* Gradient Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 h-[55%] bg-gradient-to-t from-black/70 via-black/50 to-transparent rounded-2xl"></div>
 
-                      {/* Description */}
-                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{disaster.description}</p>
+                    {/* Blur Overlay with Mask */}
+                    <div
+                      className="absolute bottom-0 left-0 right-0 h-[55%] backdrop-blur-lg rounded-2xl"
+                      style={{
+                        maskImage: "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0) 100%)",
+                        WebkitMaskImage: "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0) 100%)",
+                      }}
+                    ></div>
 
-                      {/* Date & People Affected */}
-                      <div className="flex items-center justify-between text-xs text-gray-500 mb-3 pb-3 border-b border-gray-100">
-                        <div className="flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" />
-                          {new Date(disaster.date).toLocaleDateString()}
+                    {/* Content */}
+                    <div className="relative z-10 h-full flex flex-col">
+                      {/* Spacer */}
+                      <div className="flex-1"></div>
+
+                      {/* Bottom Content Area */}
+                      <div className="px-6 pb-6 space-y-4">
+                        {/* Title and Severity Badge */}
+                        <div className="flex justify-between items-start gap-3">
+                          <h3 className="font-bold text-2xl text-white leading-tight">{disaster.disasterType}</h3>
+                          <div className="flex-shrink-0 h-7 px-4 rounded-full flex items-center justify-center backdrop-blur-xl bg-white/25 border border-white/40 shadow-lg">
+                            <span
+                              className={`text-xs font-bold ${
+                                disaster.severity === "High"
+                                  ? "text-red-400"
+                                  : disaster.severity === "Medium"
+                                    ? "text-yellow-400"
+                                    : disaster.severity === "Low"
+                                      ? "text-green-400"
+                                      : "text-gray-300"
+                              }`}
+                            >
+                              {disaster.severity}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center">
-                          <Users className="w-3 h-3 mr-1" />
-                          {disaster.peopleAffected || 0} affected
-                        </div>
-                      </div>
 
-                      {/* Reporter Info */}
-                      <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
-                          <User className="w-4 h-4 text-green-600" />
+                        {/* Location */}
+                        <div className="flex items-center text-white/95 gap-2">
+                          <MapPin className="w-4 h-4 flex-shrink-0" />
+                          <span className="text-sm font-medium truncate">{disaster.location}</span>
                         </div>
-                        <div className="text-xs">
-                          <p className="text-gray-900 font-medium">{disaster.reporterName || "Anonymous"}</p>
-                          <p className="text-gray-500">Reporter</p>
+
+                        {/* Description */}
+                        <p className="text-sm text-white/85 line-clamp-2 leading-relaxed">{disaster.description}</p>
+
+                        {/* Divider */}
+                        <div className="border-t border-white/25 pt-3"></div>
+
+                        {/* Stats Row */}
+                        <div className="flex items-center justify-between text-xs text-white/90">
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>{new Date(disaster.date).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Users className="w-3.5 h-3.5" />
+                            <span>{disaster.peopleAffected || 0} affected</span>
+                          </div>
+                        </div>
+
+                        {/* Reporter Info */}
+                        <div className="flex items-center gap-3 pt-2">
+                          <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+                            <User className="w-4 h-4 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-white truncate">{disaster.reporterName || "Anonymous"}</p>
+                            <p className="text-xs text-white/70">Reporter</p>
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -10,18 +10,7 @@ import { FaTrash } from "react-icons/fa";
 import { AuthContext } from "../../context/AuthContext";
 
 import Modal from "../main-components/Model";
-import {
-  FileText,
-  MapPin,
-  Users,
-  Calendar,
-  Phone,
-  Edit,
-  Trash2,
-  LayoutGrid,
-  List,
-  Plus,
-} from "lucide-react";
+import { FileText, MapPin, Users, Calendar, Phone, Edit, Trash2, LayoutGrid, List, Plus } from "lucide-react";
 import { BackgroundBeams } from "../../Components/ui/background-beams";
 import Disaster_form from "../disaster-management/DisasterForm";
 
@@ -79,11 +68,7 @@ export default function ViewDisasters() {
       // Use the freshly fetched data for filtering
       const visibleDisasters = !isAuthenticated
         ? (data.disasters || []).filter((d) => d.status === "Approved")
-        : (data.disasters || []).filter(
-            (d) =>
-              d.status === "Approved" ||
-              (d.status === "Pending" && d.email === user?.email)
-          );
+        : (data.disasters || []).filter((d) => d.status === "Approved" || (d.status === "Pending" && d.email === user?.email));
 
       setDisasterData(visibleDisasters || []);
     } catch (error) {
@@ -103,19 +88,14 @@ export default function ViewDisasters() {
             <div className="flex gap-2">
               <button
                 onClick={async () => {
-                  const response = await fetch(
-                    `http://localhost:5000/api/disaster/${id}`,
-                    {
-                      method: "DELETE",
-                    }
-                  );
+                  const response = await fetch(`http://localhost:5000/api/disaster/${id}`, {
+                    method: "DELETE",
+                  });
 
                   const data = await response.json();
 
                   if (!response.ok) {
-                    throw new Error(
-                      data.message || "Failed to delete disaster"
-                    );
+                    throw new Error(data.message || "Failed to delete disaster");
                   }
                   fetchDisaster();
                   toast.success("Disaster deleted successfully");
@@ -171,116 +151,106 @@ export default function ViewDisasters() {
 
   const ListCard = ({ data, navigate }) => {
     return (
-      <div className="bg-white rounded-xl shadow-sm  border z-30 border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300 ">
-        <div className="grid grid-cols-1 lg:grid-cols-3 h-auto">
-          <div className="lg:col-span-2 p-4 h-auto flex flex-col justify-between">
-            <div className="flex flex-col">
-              <div className="flex flex-row justify-between items-center mt-2">
-                <div className="border-b border-gray-100 pb-3 text-left">
-                  <div className="flex items-center justify-between mb-2">
-                    <h2 className="text-lg font-semibold text-gray-900">
-                      {data.disasterType}
-                    </h2>
-                  </div>
-                  <p className="text-gray-500 text-xs">_Id : {data._id}</p>
-                </div>
-
-                <span
-                  className={`${getSeverityColor(
-                    data.severityLevel
-                  )} px-3 py-1 rounded-full text-xs font-medium`}
-                >
-                  {data.severityLevel}
-                </span>
-              </div>
-
-              <div className="flex flex-row justify-between items-center gap-5">
-                <div className="py-3 space-y-3 text-left">
-                  <div className="flex items-start gap-2 mr-10">
-                    <FileText className="w-4 h-4 text-emerald-600 mt-1" />
-                    <p className="text-sm text-gray-600 text-wrap text-left">
-                      {data.description}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-emerald-600" />
-                    <p className="text-sm text-gray-600">{data.Location}</p>
-                  </div>
-                </div>
-                <div className="bg-white rounded-lg p-2 flex flex-row items-center gap-4 ml-2 px-2 h-[60px] shadow-md">
-                  <Phone className="w-5 h-5 text-emerald-600" />
-                  <div className="flex flex-col text-left items-left gap-1 mb-1">
-                    <p className="text-[12px] font-normal text-emerald-900">
-                      Contact
-                    </p>
-                    <p className="text-[15px] font-semibold text-emerald-900">
-                      {data.contact}
-                    </p>
-                  </div>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group h-[280px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 h-full">
+          {/* Left Side: Image */}
+          <div className="relative h-full overflow-hidden">
+            <img
+              src={data.images}
+              alt={`${data.disasterType} in ${data.Location}`}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+            />
+            {/* Severity Badge on Image */}
+            <div className="absolute top-3 left-3 z-10">
+              <span className={`${getSeverityColor(data.severityLevel)} px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm`}>
+                {data.severityLevel}
+              </span>
+            </div>
+            {/* People Affected Badge */}
+            <div className="absolute bottom-3 right-3 backdrop-blur-md bg-white/90 border border-white/20 shadow-lg rounded-lg p-2.5 z-10">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-emerald-600" />
+                <div className="flex flex-col text-left">
+                  <p className="text-[9px] font-medium text-gray-500 uppercase">Affected</p>
+                  <p className="text-sm font-bold text-gray-900">{data.numberOfPeopleAffected.toLocaleString()}</p>
                 </div>
               </div>
             </div>
+          </div>
 
-            <td className="px-6 py-4">
-              <div className="flex space-x-3">
-                {isAuthenticated && (
-                  <>
+          {/* Right Side: Details */}
+          <div className="p-5 flex flex-col justify-between h-full relative z-10">
+            {/* Header */}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-xl font-bold text-gray-900 group-hover:text-emerald-600 transition-colors truncate">{data.disasterType}</h2>
+                  <p className="text-xs text-gray-400 mt-1 font-mono">ID: {data._id.slice(-8)}</p>
+                </div>
+                {isAuthenticated && data.email === user?.email && (
+                  <div className="flex gap-2 flex-shrink-0 ml-2">
                     <button
-                      onClick={() => handleEdit(d)}
-                      className="text-gray-600 hover:text-green-600 transition-colors"
+                      onClick={() => handleEdit(data)}
+                      className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
+                      title="Edit"
                     >
                       <FaEdit size={16} />
                     </button>
                     <button
-                      onClick={() => handleDelte(d._id)}
-                      className="text-gray-600 hover:text-red-600 transition-colors"
+                      onClick={() => handleDelte(data._id)}
+                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                      title="Delete"
                     >
                       <FaTrash size={16} />
                     </button>
-                  </>
+                  </div>
                 )}
               </div>
-            </td>
-          </div>
 
-          <div className="relative m-5 lg:rounded-l-xl overflow-hidden w-auto max-h-[250px]">
-            <img
-              src={data.images}
-              alt={`Map showing location of ${data.Location || "this disaster"}`}
-              className="w-full h-full object-cover lg:rounded-l-xl"
-              loading="lazy"
-            />
-
-            <div className="absolute top-0 right-0 backdrop-blur-md bg-white/30 border h-[50px] flex items-center border-white/20 shadow-lg rounded-xl p-3 m-2">
-              <div className="flex items-center gap-2 justify-center">
-                <Users className="w-4  text-emerald-900" />
-                <div className="flex flex-col text-left">
-                  <p className="text-[10px] font-normal text-emerald-900">
-                    Affected
-                  </p>
-                  <p className="text-[15px] font-semibold text-emerald-900">
-                    {data.numberOfPeopleAffected.toLocaleString()} Peoples
-                  </p>
-                </div>
+              {/* Description */}
+              <div className="flex items-start gap-2 border-l-2 border-emerald-500 pl-3">
+                <FileText className="w-4 h-4 text-emerald-600 mt-1 flex-shrink-0" />
+                <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">{data.description}</p>
               </div>
             </div>
 
-            <div className="absolute top-0 left-0 backdrop-blur-md bg-white/30 border h-[50px] flex items-center border-white/20 shadow-lg rounded-xl p-3 m-2">
-              <div className="flex items-center gap-2 justify-center">
-                <Calendar className="w-4 h-4 text-emerald-600" />
-                <div className="flex flex-col text-left">
-                  <p className="text-[10px] font-normal text-emerald-900">
-                    Date
-                  </p>
-                  <p className="text-[15px] font-semibold text-emerald-900">
-                    {formatDate(data.date)}
-                  </p>
+            {/* Info Grid */}
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-2">
+                <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <div className="flex flex-col text-left min-w-0">
+                  <p className="text-[9px] font-medium text-gray-500 uppercase">Location</p>
+                  <p className="text-xs font-semibold text-gray-900 truncate">{data.Location}</p>
                 </div>
               </div>
-            </div>
 
-            <div className="absolute bottom-0 left-0 right-0 p-3"></div>
+              <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-2">
+                <Calendar className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <div className="flex flex-col text-left">
+                  <p className="text-[9px] font-medium text-gray-500 uppercase">Date</p>
+                  <p className="text-xs font-semibold text-gray-900">{formatDate(data.date)}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-2">
+                <Phone className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <div className="flex flex-col text-left">
+                  <p className="text-[9px] font-medium text-gray-500 uppercase">Contact</p>
+                  <p className="text-xs font-semibold text-gray-900">{data.contact}</p>
+                </div>
+              </div>
+
+              {data.status && (
+                <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-2">
+                  <div className={`w-2 h-2 rounded-full ${data.status === "Approved" ? "bg-green-500" : "bg-yellow-500"} flex-shrink-0`}></div>
+                  <div className="flex flex-col text-left">
+                    <p className="text-[9px] font-medium text-gray-500 uppercase">Status</p>
+                    <p className="text-xs font-semibold text-gray-900">{data.status}</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -429,9 +399,9 @@ export default function ViewDisasters() {
   return (
     <>
       <div>
-        <div className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-6 pt-4">
+        <div className="min-h-screen  bg-gray-50 px-4 sm:px-6 lg:px-6 pt-4">
           {/* Grid Background */}
-          <div className="absolute inset-0 z-0 opacity-10">
+          <div className="absolute inset-0 z-0 opacity-10 ">
             <div
               className="w-full h-full"
               style={{
@@ -439,22 +409,15 @@ export default function ViewDisasters() {
       linear-gradient(to left, #22c55e 1px, transparent 1px), 
       linear-gradient(to top, #22c55e 1px, transparent 1px)`,
                 backgroundSize: "50px 50px",
-                WebkitMaskImage:
-                  "linear-gradient(to left, black 10%, transparent 100%)",
-                maskImage:
-                  "linear-gradient(to left, black 10%, transparent 90%)",
+                WebkitMaskImage: "linear-gradient(to left, black 10%, transparent 100%)",
+                maskImage: "linear-gradient(to left, black 10%, transparent 90%)",
               }}
             ></div>
           </div>
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-8 ">
             <div className="flex flex-col justify-start text-left ml-2">
-              <h1 className="text-2xl mt-2 font-semibold text-gray-700">
-                Disaster Reports
-              </h1>
-              <p className="text-sm text-gray-400 mt-1">
-                Stay informed with the latest disaster updates and response
-                data.
-              </p>
+              <h1 className="text-2xl mt-2 font-semibold text-gray-700">Disaster Reports</h1>
+              <p className="text-sm text-gray-400 mt-1">Stay informed with the latest disaster updates and response data.</p>
             </div>
 
             <div className="flex flex-row  gap-2">
@@ -463,9 +426,7 @@ export default function ViewDisasters() {
                   onClick={() => setViewMode("list")}
                   type="button"
                   className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === "list"
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "text-gray-600 hover:text-gray-800"
+                    viewMode === "list" ? "bg-emerald-100 text-emerald-800" : "text-gray-600 hover:text-gray-800"
                   }`}
                 >
                   <List className="w-4 h-4 mr-1" />
@@ -475,9 +436,7 @@ export default function ViewDisasters() {
                   onClick={() => setViewMode("grid")}
                   type="button"
                   className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === "grid"
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "text-gray-600 hover:text-gray-800"
+                    viewMode === "grid" ? "bg-emerald-100 text-emerald-800" : "text-gray-600 hover:text-gray-800"
                   }`}
                 >
                   <LayoutGrid className="w-4 h-4 mr-1 " />
@@ -500,27 +459,21 @@ export default function ViewDisasters() {
             className={`grid gap-6 ${
               viewMode === "grid1"
                 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 z-20"
-                : "grid-cols-1 z-20"
+                : viewMode === "list"
+                  ? "grid-cols-1 lg:grid-cols-2 z-20"
+                  : "grid-cols-1 z-20"
             }`}
           >
             {loading ? (
               // Show 6 skeletons for grid, or 1 for list
               viewMode === "grid" ? (
-                Array.from({ length: 6 }).map((_, i) => (
-                  <Skeleton key={i} viewMode={viewMode} />
-                ))
+                Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} viewMode={viewMode} />)
               ) : (
                 <Skeleton viewMode={viewMode} />
               )
             ) : viewMode === "list" ? (
               disasterData && disasterData.length > 0 ? (
-                disasterData.map((disaster) => (
-                  <ListCard
-                    key={disaster._id}
-                    data={disaster}
-                    navigate={navigate}
-                  />
-                ))
+                disasterData.map((disaster) => <ListCard key={disaster._id} data={disaster} navigate={navigate} />)
               ) : (
                 <p className="text-gray-500">No disaster reports available.</p>
               )
@@ -586,13 +539,7 @@ export default function ViewDisasters() {
             initialData={editingdisaster}
             isEdit={true}
             onSubmit={(formData) => {
-              setdisasters(
-                disasters.map((disaster) =>
-                  disaster._id === editingdisaster._id
-                    ? { ...disaster, ...formData }
-                    : disaster
-                )
-              );
+              setdisasters(disasters.map((disaster) => (disaster._id === editingdisaster._id ? { ...disaster, ...formData } : disaster)));
               setIsEditModalOpen(false);
               setIsModalOpen(false);
               toast.success("disaster updated successfully");

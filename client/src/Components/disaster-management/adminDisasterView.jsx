@@ -56,10 +56,7 @@ const AdminDisasterView = () => {
   const approveDisaster = async (id) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://localhost:5000/api/disaster/${id}/approve`,
-        { method: "PUT" }
-      );
+      const response = await fetch(`http://localhost:5000/api/disaster/${id}/approve`, { method: "PUT" });
       if (!response.ok) throw new Error("Failed to approve disaster");
       toast.success("Disaster approved successfully");
       fetchDisasters();
@@ -73,10 +70,7 @@ const AdminDisasterView = () => {
   const rejectDisaster = async (id) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://localhost:5000/api/disaster/${id}/reject`,
-        { method: "PUT" }
-      );
+      const response = await fetch(`http://localhost:5000/api/disaster/${id}/reject`, { method: "PUT" });
       if (!response.ok) throw new Error("Failed to reject disaster");
       toast.success("Disaster rejected");
       fetchDisasters();
@@ -99,15 +93,9 @@ const AdminDisasterView = () => {
             <button
               onClick={async () => {
                 try {
-                  const response = await fetch(
-                    `http://localhost:5000/api/disaster/${id}`,
-                    { method: "DELETE" }
-                  );
+                  const response = await fetch(`http://localhost:5000/api/disaster/${id}`, { method: "DELETE" });
                   const data = await response.json();
-                  if (!response.ok)
-                    throw new Error(
-                      data.message || "Failed to delete disaster"
-                    );
+                  if (!response.ok) throw new Error(data.message || "Failed to delete disaster");
                   setDisasters((prev) => prev.filter((d) => d._id !== id));
                   toast.dismiss(t.id);
                   toast.success("Disaster deleted successfully");
@@ -153,91 +141,154 @@ const AdminDisasterView = () => {
 
   // Table/Grid views (update fields as needed)
   const TableView = () => (
-    <div className="overflow-x-auto rounded-lg border border-gray-200">
-      <table className="w-full text-sm text-left text-gray-700">
-        <thead className="text-xs uppercase bg-gray-50">
-          <tr className="border-b border-gray-200">
-            <th className="px-6 py-4 font-semibold text-gray-600">Type</th>
-            <th className="px-6 py-4 font-semibold text-gray-600">Severity</th>
-            <th className="px-6 py-4 font-semibold text-gray-600">Location</th>
-            <th className="px-6 py-4 font-semibold text-gray-600">Date</th>
-            <th className="px-6 py-4 font-semibold text-gray-600">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredDisasters.map((d) => (
-            <tr
-              key={d._id}
-              className="bg-white hover:bg-gray-50 transition-colors relative group"
-            >
-              <td className="px-6 py-4 font-medium">{d.disasterType}</td>
-              <td className="px-6 py-4">{d.severityLevel}</td>
-              <td className="px-6 py-4">{d.Location}</td>
-              <td className="px-6 py-4">
-                {format(new Date(d.date), "MMM d, yyyy")}
-              </td>
-              <td className="px-6 py-4">
-                <div className="flex space-x-3">
-                  <button
-                    onClick={() => handleEdit(d)}
-                    className="text-gray-600 hover:text-green-600 transition-colors"
-                  >
-                    <FaEdit size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(d._id)}
-                    className="text-gray-600 hover:text-red-600 transition-colors"
-                  >
-                    <FaTrash size={16} />
-                  </button>
-                  {/* Approve/Reject buttons for pending disasters */}
-                  {d.status === "Pending" && (
-                    <>
-                      <button
-                        onClick={() => approveDisaster(d._id)}
-                        className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => rejectDisaster(d._id)}
-                        className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-                </div>
-              </td>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Disaster Type</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Severity</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Location</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {filteredDisasters.map((d, index) => (
+              <tr
+                key={d._id}
+                className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50/50"} hover:bg-emerald-50/50 transition-all duration-200 group`}
+              >
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
+                      <img src={d.images} alt={d.disasterType} className="w-full h-full object-cover" />
+                    </div>
+                    <span className="font-semibold text-gray-900 text-sm">{d.disasterType}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                        d.severityLevel === "Critical"
+                          ? "bg-red-100 text-red-700"
+                          : d.severityLevel === "High"
+                            ? "bg-orange-100 text-orange-700"
+                            : d.severityLevel === "Medium"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-green-100 text-green-700"
+                      }`}
+                    >
+                      {d.severityLevel}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span className="text-sm text-gray-700">{d.Location}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <span className="text-sm text-gray-700">{format(new Date(d.date), "MMM d, yyyy")}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        d.status === "Approved"
+                          ? "bg-green-100 text-green-700 border border-green-200"
+                          : d.status === "Rejected"
+                            ? "bg-red-100 text-red-700 border border-red-200"
+                            : "bg-yellow-100 text-yellow-700 border border-yellow-200"
+                      }`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full mr-2 ${
+                          d.status === "Approved" ? "bg-green-500" : d.status === "Rejected" ? "bg-red-500" : "bg-yellow-500"
+                        }`}
+                      ></span>
+                      {d.status}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center justify-center gap-2">
+                    {d.status === "Pending" && (
+                      <>
+                        <button
+                          onClick={() => approveDisaster(d._id)}
+                          className="inline-flex items-center px-3 py-1.5 bg-green-500 text-white text-xs font-medium rounded-lg hover:bg-green-600 transition-colors shadow-sm"
+                        >
+                          <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => rejectDisaster(d._id)}
+                          className="inline-flex items-center px-3 py-1.5 bg-red-500 text-white text-xs font-medium rounded-lg hover:bg-red-600 transition-colors shadow-sm"
+                        >
+                          <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                          Reject
+                        </button>
+                      </>
+                    )}
+                    <button
+                      onClick={() => handleEdit(d)}
+                      className="p-2 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
+                      title="Edit"
+                    >
+                      <FaEdit size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(d._id)}
+                      className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                      title="Delete"
+                    >
+                      <FaTrash size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 
   const GridView = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
       {filteredDisasters.map((d) => (
-        <div
-          key={d._id}
-          className="bg-white rounded-lg border-gray-100 border shadow-sm hover:shadow-md transition-shadow duration-200"
-        >
-          {d.images && (
-            <img
-              src={d.images}
-              alt={d.disasterType}
-              className="w-full h-48 object-cover rounded-t-lg"
-            />
-          )}
+        <div key={d._id} className="bg-white rounded-lg border-gray-100 border shadow-sm hover:shadow-md transition-shadow duration-200">
+          {d.images && <img src={d.images} alt={d.disasterType} className="w-full h-48 object-cover rounded-t-lg" />}
           <div className="p-4 flex flex-col justify-between">
             <div className="flex justify-between items-start mb-3">
-              <h2 className="text-lg font-semibold text-gray-900">
-                {d.disasterType}
-              </h2>
-              <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                {d.severityLevel}
-              </span>
+              <h2 className="text-lg font-semibold text-gray-900">{d.disasterType}</h2>
+              <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">{d.severityLevel}</span>
             </div>
             <p className="text-sm text-gray-600 mb-3">{d.description}</p>
             <div className="space-y-5 text-xs text-gray-500">
@@ -245,22 +296,15 @@ const AdminDisasterView = () => {
                 <Map className="mr-2 " /> {d.Location}
               </div>
               <div className="flex items-center">
-                <FaCalendarAlt className="mr-2" />{" "}
-                {format(new Date(d.date), "MMM d, yyyy")}
+                <FaCalendarAlt className="mr-2" /> {format(new Date(d.date), "MMM d, yyyy")}
               </div>
             </div>
             <div className="mt-3 pt-3 flex items-center justify-between">
               <div className="flex gap-3">
-                <button
-                  onClick={() => handleEdit(d)}
-                  className="text-gray-600 hover:text-green-600 transition-colors"
-                >
+                <button onClick={() => handleEdit(d)} className="text-gray-600 hover:text-green-600 transition-colors">
                   <FaEdit size={16} />
                 </button>
-                <button
-                  onClick={() => handleDelete(d._id)}
-                  className="text-gray-600 hover:text-red-600 transition-colors"
-                >
+                <button onClick={() => handleDelete(d._id)} className="text-gray-600 hover:text-red-600 transition-colors">
                   <FaTrash size={16} />
                 </button>
               </div>
@@ -310,9 +354,7 @@ const AdminDisasterView = () => {
             }}
             className="absolute inset-y-0 right-0 pr-3 flex items-center"
           >
-            <span className="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100 transition-colors">
-              ✕
-            </span>
+            <span className="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100 transition-colors">✕</span>
           </button>
         )}
       </div>
@@ -326,9 +368,7 @@ const AdminDisasterView = () => {
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center text-left">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Disaster Management
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900">Disaster Management</h1>
               <p className="text-sm text-gray-500">Admin Dashboard</p>
             </div>
             <div className="flex items-center space-x-4">
@@ -349,9 +389,7 @@ const AdminDisasterView = () => {
                     onClick={() => setViewMode("grid")}
                     type="button"
                     className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                      viewMode === "grid"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "text-gray-600 hover:text-gray-800"
+                      viewMode === "grid" ? "bg-emerald-100 text-emerald-800" : "text-gray-600 hover:text-gray-800"
                     }`}
                   >
                     <LayoutGrid className="w-4 h-4 mr-1 " />
@@ -361,9 +399,7 @@ const AdminDisasterView = () => {
                     onClick={() => setViewMode("list")}
                     type="button"
                     className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                      viewMode === "list"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "text-gray-600 hover:text-gray-800"
+                      viewMode === "list" ? "bg-emerald-100 text-emerald-800" : "text-gray-600 hover:text-gray-800"
                     }`}
                   >
                     <List className="w-4 h-4 mr-1" />
@@ -387,40 +423,95 @@ const AdminDisasterView = () => {
       </header>
 
       <main className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {error && (
-          <div className="mb-6 p-3 text-sm bg-red-50 border border-red-200 rounded-md text-red-600">
-            {error}
+        <div className="flex gap-6">
+          {/* Left Sidebar - Statistics */}
+          <div className="w-72 flex-shrink-0 space-y-4">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+              <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Overview</h3>
+
+              <div className="space-y-4">
+                {/* Total Disasters */}
+                <div className="pb-4 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500 uppercase">Total Disasters</span>
+                    <span className="text-2xl font-bold text-gray-900">{disasters.length}</span>
+                  </div>
+                </div>
+
+                {/* Pending */}
+                <div className="pb-4 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500 uppercase">Pending</span>
+                    <span className="text-2xl font-bold text-gray-900">{disasters.filter((d) => d.status === "Pending").length}</span>
+                  </div>
+                </div>
+
+                {/* Approved */}
+                <div className="pb-4 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500 uppercase">Approved</span>
+                    <span className="text-2xl font-bold text-gray-900">{disasters.filter((d) => d.status === "Approved").length}</span>
+                  </div>
+                </div>
+
+                {/* Rejected */}
+                <div className="pb-4 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500 uppercase">Rejected</span>
+                    <span className="text-2xl font-bold text-gray-900">{disasters.filter((d) => d.status === "Rejected").length}</span>
+                  </div>
+                </div>
+
+                {/* Severity Levels */}
+                <div>
+                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-3">Severity Levels</h4>
+                  <div className="space-y-2">
+                    {["Critical", "High", "Medium", "Low"].map((severity) => {
+                      const count = disasters.filter((d) => d.severityLevel === severity).length;
+                      if (count === 0) return null;
+                      return (
+                        <div key={severity} className="flex items-center justify-between py-1">
+                          <span className="text-sm text-gray-600">{severity}</span>
+                          <span className="text-sm font-semibold text-gray-900 bg-gray-100 px-2 py-0.5 rounded">{count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
-        {loading ? (
-          <div className="text-center text-gray-500 text-[15px] py-10">
-            Loading disasters...
+
+          {/* Right Content Area */}
+          <div className="flex-1 min-w-0">
+            {error && <div className="mb-6 p-3 text-sm bg-red-50 border border-red-200 rounded-md text-red-600">{error}</div>}
+            {loading ? (
+              <div className="text-center text-gray-500 text-[15px] py-10">Loading disasters...</div>
+            ) : filteredDisasters.length === 0 ? (
+              <div className="text-center text-gray-400 text-[16px] py-10">No records found.</div>
+            ) : viewMode === "grid" ? (
+              <BentoGrid className="w-full z-20">
+                {filteredDisasters.map((disaster, i) => (
+                  <BentoGridItem
+                    key={disaster._id}
+                    title={disaster.disasterType}
+                    description={disaster.description}
+                    header={disaster.severityLevel}
+                    icon={disaster.images}
+                    data={disaster}
+                    navigation={() => {}}
+                    type="admin"
+                    approveDisaster={approveDisaster}
+                    rejectDisaster={rejectDisaster}
+                    className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+                  />
+                ))}
+              </BentoGrid>
+            ) : (
+              <TableView />
+            )}
           </div>
-        ) : filteredDisasters.length === 0 ? (
-          <div className="text-center text-gray-400 text-[16px] py-10">
-            No records found.
-          </div>
-        ) : viewMode === "grid" ? (
-          <BentoGrid className="w-full z-20">
-            {filteredDisasters.map((disaster, i) => (
-              <BentoGridItem
-                key={disaster._id}
-                title={disaster.disasterType}
-                description={disaster.description}
-                header={disaster.severityLevel}
-                icon={disaster.images}
-                data={disaster}
-                navigation={() => {}}
-                type="admin"
-                approveDisaster={approveDisaster}
-                rejectDisaster={rejectDisaster}
-                className={i === 3 || i === 6 ? "md:col-span-2" : ""}
-              />
-            ))}
-          </BentoGrid>
-        ) : (
-          <TableView />
-        )}
+        </div>
       </main>
 
       <Modal
@@ -431,10 +522,7 @@ const AdminDisasterView = () => {
         }}
         title="Create New Disaster"
       >
-        <DisasterForm
-          onDisasterSuccess={fetchDisasters}
-          onDisasterClosed={() => setIsAddModalOpen(false)}
-        />
+        <DisasterForm onDisasterSuccess={fetchDisasters} onDisasterClosed={() => setIsAddModalOpen(false)} />
       </Modal>
 
       <Modal
@@ -453,24 +541,12 @@ const AdminDisasterView = () => {
         />
       </Modal>
 
-      <Modal
-        isOpen={!!imageModalUrl}
-        onClose={() => setImageModalUrl(null)}
-        title="Image Preview"
-      >
+      <Modal isOpen={!!imageModalUrl} onClose={() => setImageModalUrl(null)} title="Image Preview">
         <div className="space-y-4">
-          <img
-            src={imageModalUrl}
-            alt="Preview"
-            className="w-full h-auto rounded-lg"
-          />
+          <img src={imageModalUrl} alt="Preview" className="w-full h-auto rounded-lg" />
           <div>
-            <h2 className="text-lg font-semibold text-gray-800">
-              {imageModalTitle}
-            </h2>
-            <p className="text-sm text-gray-600 mt-1">
-              {imageModalDescription}
-            </p>
+            <h2 className="text-lg font-semibold text-gray-800">{imageModalTitle}</h2>
+            <p className="text-sm text-gray-600 mt-1">{imageModalDescription}</p>
           </div>
         </div>
       </Modal>

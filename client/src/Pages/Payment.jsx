@@ -8,24 +8,9 @@ import earth_img from "../assets/Earth.webp";
 import BankSelector from "../Components/disaster-funding/Bank-Selector";
 import { AuroraBackground } from "../Components/ui/aurora-background";
 import { AuthContext } from "../context/AuthContext";
-import {
-  AlertCircle,
-  Globe,
-  Users,
-  DollarSign,
-  Clock,
-  Shield,
-  Heart,
-  MapPin,
-  Calendar,
-  X,
-  BadgeCheck,
-  XCircle,
-} from "lucide-react";
+import { AlertCircle, Globe, Users, DollarSign, Clock, Shield, Heart, MapPin, Calendar, X, BadgeCheck, XCircle } from "lucide-react";
 
-const stripePromise = loadStripe(
-  "pk_test_51QyzW0F1MqlTWE7FVvTcRhf9uQFUPTOp9d3PdQ99tsftMm8mpJr71Eu8hohiAYUu3Ruf80xMXceVVzLrRIv1dZDG003Us4ou4b"
-);
+const stripePromise = loadStripe("pk_test_51QyzW0F1MqlTWE7FVvTcRhf9uQFUPTOp9d3PdQ99tsftMm8mpJr71Eu8hohiAYUu3Ruf80xMXceVVzLrRIv1dZDG003Us4ou4b");
 
 function Payment() {
   const fileInputRef = useRef(null);
@@ -49,17 +34,13 @@ function Payment() {
   const user_ID = user?.id;
 
   const handleFileChange = (event) => {
-    const files = Array.from(event.target.files).filter((file) =>
-      [".png", ".pdf"].includes(file.name.slice(-4).toLowerCase())
-    );
+    const files = Array.from(event.target.files).filter((file) => [".png", ".pdf"].includes(file.name.slice(-4).toLowerCase()));
     setSelectedFiles(files);
   };
 
   const fetchPayments = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/payment/user/${user_ID}`
-      );
+      const response = await fetch(`http://localhost:5000/api/payment/user/${user_ID}`);
       const data = await response.json();
       setPayments(data.payments || []);
     } catch (error) {
@@ -167,25 +148,22 @@ function Payment() {
         return;
       }
 
-      const response = await fetch(
-        "http://localhost:5000/api/payment/verify-bank-payment",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_ID,
-            username: fullName,
-            email: "Pasinduh@inqube.com",
-            amount: amount,
-            bankname: bankName,
-            branch: depositBranch,
-            currency: "USD",
-            slipImage: fileName,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:5000/api/payment/verify-bank-payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_ID,
+          username: fullName,
+          email: "Pasinduh@inqube.com",
+          amount: amount,
+          bankname: bankName,
+          branch: depositBranch,
+          currency: "USD",
+          slipImage: fileName,
+        }),
+      });
 
       const result = await response.json();
       const payment_Id = result.paymentId;
@@ -311,122 +289,118 @@ function Payment() {
   };
 
   return (
-    <div className="min-h-screen ">
-      <div className=" mx-auto px-4 sm:px-6 lg:px-4 py-4">
-        <div className="flex gap-5 ">
-          <AuroraBackground />
-          <div className=" min-w-[350px] w-[350px]">
+    <div className="min-h-screen bg-gray-50 relative">
+      <div className="absolute inset-0 -z-10">
+        <AuroraBackground />
+      </div>
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-[1600px] relative z-10">
+        <div className="flex gap-6">
+          {/* Left Sidebar - Disaster List */}
+          <div className="min-w-[380px] w-[380px]">
             {selectedDisaster ? (
               // Disaster Details View
-              <div className="space-y-4 w-full pt-4">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    {selectedDisaster.disasterType}
-                  </h2>
+              <div className="bg-white rounded-lg shadow-sm p-6 space-y-5 sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar">
+                <div className="flex justify-between items-center border-b pb-4">
+                  <h2 className="text-xl font-bold text-gray-900">{selectedDisaster.disasterType}</h2>
                   <button
                     onClick={() => setSelectedDisaster(null)}
-                    className="text-gray-500 hover:text-gray-700"
+                    className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
                 <div className="space-y-4">
-                  <div className="h-[150px] lg:rounded-l-xl overflow-hidden">
+                  <div className="h-[180px] rounded-lg overflow-hidden shadow-sm">
                     <img
                       src={selectedDisaster.images}
                       alt={`Map showing location of ${selectedDisaster.Location || "this disaster"}`}
-                      className="w-full h-full object-cover rounded-lg"
+                      className="w-full h-full object-cover"
                       loading="lazy"
                     />
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-emerald-600 mt-1" />
-                    <div className="flex flex-col w-full text-left text-emerald-600">
-                      <p className="text-[12px] font-semibold text-gray-700">
-                        Disaster Date :
-                      </p>
-                      <p className="text-sm text-gray-700">
-                        {new Date(selectedDisaster.date).toLocaleDateString()}
-                      </p>
+
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Calendar className="w-4 h-4 text-emerald-600 mt-0.5" />
+                      <div className="flex flex-col text-left">
+                        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Disaster Date</p>
+                        <p className="text-base font-medium text-gray-900">
+                          {new Date(selectedDisaster.date).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                      <MapPin className="w-4 h-4 text-emerald-600 mt-0.5" />
+                      <div className="flex flex-col text-left">
+                        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Location</p>
+                        <p className="text-base font-medium text-gray-900">{selectedDisaster.Location}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                      <Users className="w-4 h-4 text-emerald-600 mt-0.5" />
+                      <div className="flex flex-col text-left">
+                        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">People Affected</p>
+                        <p className="text-base font-medium text-gray-900">{selectedDisaster.numberOfPeopleAffected.toLocaleString()} people</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                      <AlertCircle className="w-4 h-4 text-emerald-600 mt-0.5" />
+                      <div className="flex flex-col text-left">
+                        <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">Severity Level</p>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-base font-semibold mt-1 w-fit ${
+                            selectedDisaster.severityLevel === "High"
+                              ? "bg-red-100 text-red-700"
+                              : selectedDisaster.severityLevel === "Medium"
+                                ? "bg-yellow-100 text-yellow-700"
+                                : "bg-green-100 text-green-700"
+                          }`}
+                        >
+                          {selectedDisaster.severityLevel}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-emerald-600 mt-1" />
-                    <div className="flex flex-col w-full text-left text-emerald-600">
-                      <p className="text-[12px] font-semibold text-gray-700">
-                        Location :
-                      </p>
-                      <p className="text-sm text-gray-700">
-                        {selectedDisaster.Location}
-                      </p>
-                    </div>
+                  <div className="pt-2">
+                    <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-2">Description</p>
+                    <p className="text-base text-gray-700 leading-relaxed text-left">{selectedDisaster.description}</p>
                   </div>
-
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-emerald-600 mt-1" />
-                    <div className="flex flex-col w-full text-left text-emerald-600">
-                      <p className="text-[12px] font-semibold text-gray-700">
-                        People affected :
-                      </p>
-                      <p className="text-sm text-gray-700">
-                        {selectedDisaster.numberOfPeopleAffected.toLocaleString()}{" "}
-                        affected
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-emerald-600 mt-1" />
-                    <div className="flex flex-col w-full text-left text-emerald-600">
-                      <p className="text-[12px] font-semibold text-gray-700">
-                        Severity Level :
-                      </p>
-                      <p className="text-sm text-gray-700">
-                        {selectedDisaster.severityLevel}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="pt-4 px-1">
-                  <p className="text-sm text-gray-700 font-semibold text-left ">
-                    Description
-                  </p>
-                  <p className="text-sm text-gray-700 text-left">
-                    {selectedDisaster.description}
-                  </p>
                 </div>
               </div>
             ) : (
               // Disaster List View
-              <div className="space-y-4 w-full pt-4 h-[calc(100vh-20px)] overflow-y-auto scrollbar-hide">
-                <div className="text-left">
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    Disaster List
-                  </h2>
-                  <p className="text-[14px] font-normal text-gray-400">
-                    Select a disaster to view details and make a donation.
-                  </p>
+              <div className="bg-white rounded-lg shadow-sm p-6 h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
+                <div className="text-left mb-5 border-b pb-4">
+                  <h2 className="text-xl font-bold text-gray-900">Active Disasters</h2>
+                  <p className="text-base font-normal text-gray-500 mt-1">Select a disaster to view details and make a donation</p>
                 </div>
                 <div className="space-y-4">
                   {disasters.map((disaster) => (
                     <div
                       key={disaster._id}
-                      className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer bg-white"
+                      className="p-4 border border-gray-200 rounded-lg hover:border-emerald-300 hover:shadow-md transition-all duration-300 cursor-pointer bg-white group"
                       onClick={() => setSelectedDisaster(disaster)}
                     >
                       {/* Disaster Header */}
-                      <div className="flex justify-between items-center">
-                        <h3 className="text-lg font-semibold text-gray-800">
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="text-base font-semibold text-gray-800 group-hover:text-emerald-700 transition-colors">
                           {disaster.disasterType}
                         </h3>
                         <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          className={`px-2.5 py-1 rounded-full text-base font-semibold ${
                             disaster.severityLevel === "High"
-                              ? "bg-red-100 text-red-600"
+                              ? "bg-red-100 text-red-700"
                               : disaster.severityLevel === "Medium"
-                                ? "bg-yellow-100 text-yellow-600"
-                                : "bg-green-100 text-green-600"
+                                ? "bg-yellow-100 text-yellow-700"
+                                : "bg-green-100 text-green-700"
                           }`}
                         >
                           {disaster.severityLevel}
@@ -434,31 +408,26 @@ function Payment() {
                       </div>
 
                       {/* Disaster Image */}
-                      <div className="relative mt-3 h-[150px] rounded-lg overflow-hidden">
+                      <div className="relative h-[140px] rounded-md overflow-hidden mb-3">
                         <img
                           src={disaster.images}
                           alt={`Image of ${disaster.disasterType}`}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                        <div className="absolute top-0 left-0 bg-black/30 text-white text-xs px-2 py-1 rounded-br-lg">
+                        <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white text-base px-2 py-1 rounded-md">
                           {new Date(disaster.date).toLocaleDateString()}
                         </div>
                       </div>
 
                       {/* Disaster Details */}
-                      <div className="mt-3 space-y-2">
+                      <div className="space-y-2">
                         <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-emerald-600" />
-                          <p className="text-[13px] w-[300px]  text-gray-600 text-left">
-                            {disaster.Location}
-                          </p>
+                          <MapPin className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                          <p className="text-base text-gray-600 text-left truncate">{disaster.Location}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-emerald-600" />
-                          <p className="text-[13px] text-gray-600">
-                            {disaster.numberOfPeopleAffected.toLocaleString()}{" "}
-                            affected
-                          </p>
+                          <Users className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                          <p className="text-base text-gray-600">{disaster.numberOfPeopleAffected.toLocaleString()} people affected</p>
                         </div>
                       </div>
                     </div>
@@ -467,210 +436,189 @@ function Payment() {
               </div>
             )}
           </div>
-          {/* Left Side - Disaster Details */}
 
           {/* Right Side - Payment Form */}
-          <div className="w-full border-l border-gray-100 ">
-            <div className="bg-white rounded-xl py-3   px-6 mb-6">
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col text-left">
-                  <h2 className="text-[25px] font-semibold text-gray-900">
-                    Make a Donation
-                  </h2>
-                  <p className="text-[14px] font-normal text-gray-400 text-wrap w-[450px]">
-                    Your donation will help us provide emergency relief to
-                    families affected by disasters
-                  </p>
-                </div>
-                <div className="flex justify-center h-full items-center ">
-                  <div className="bg-emerald-50 p-1 gap-1 rounded-lg inline-flex">
-                    <button
-                      className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-                        paymentMethod === "card"
-                          ? "bg-emerald-600 text-white"
-                          : "text-emerald-600 hover:bg-emerald-100"
-                      }`}
-                      onClick={() => setPaymentMethod("card")}
-                    >
-                      Card Payment
-                    </button>
-                    <button
-                      className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-                        paymentMethod === "bank"
-                          ? "bg-emerald-600 text-white"
-                          : "text-emerald-600 hover:bg-emerald-100"
-                      }`}
-                      onClick={() => setPaymentMethod("bank")}
-                    >
-                      Bank Transfer
-                    </button>
+          <div className="flex-1">
+            <div className="bg-white rounded-lg shadow-sm">
+              {/* Header Section */}
+              <div className="border-b border-gray-200 px-6 py-5">
+                <div className="flex justify-between items-start">
+                  <div className="flex flex-col text-left">
+                    <h2 className="text-2xl font-bold text-gray-900">Make a Donation</h2>
+                    <p className="text-base font-normal text-gray-500 mt-1.5 max-w-lg">
+                      Your donation will help us provide emergency relief to families affected by disasters
+                    </p>
+                  </div>
+                  <div className="flex justify-center items-center">
+                    <div className="bg-gray-100 p-1 gap-1 rounded-lg inline-flex border border-gray-200">
+                      <button
+                        className={`px-4 py-2 rounded-md text-base font-semibold transition-all ${
+                          paymentMethod === "card" ? "bg-emerald-600 text-white shadow-sm" : "text-gray-600 hover:bg-gray-200"
+                        }`}
+                        onClick={() => setPaymentMethod("card")}
+                      >
+                        Card Payment
+                      </button>
+                      <button
+                        className={`px-4 py-2 rounded-md text-base font-semibold transition-all ${
+                          paymentMethod === "bank" ? "bg-emerald-600 text-white shadow-sm" : "text-gray-600 hover:bg-gray-200"
+                        }`}
+                        onClick={() => setPaymentMethod("bank")}
+                      >
+                        Bank Transfer
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="flex">
-                <div className=" w-full">
+              {/* Payment Form Section */}
+              <div className="flex px-6 py-6">
+                <div className="w-full max-w-3xl">
                   {paymentMethod === "card" ? (
                     <Elements stripe={stripePromise}>
-                      <CheckoutForm
-                        refreshPayments={refreshPayments}
-                        selectedDisaster={selectedDisaster}
-                      />
+                      <CheckoutForm refreshPayments={refreshPayments} selectedDisaster={selectedDisaster} />
                     </Elements>
                   ) : (
-                    <div className="space-y-4  w-full ml-0 pr-6 mr-auto mt-5 ">
-                      <div className="mb-4 text-left ">
-                        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">
-                          Full Name
-                        </label>
+                    <div className="space-y-5">
+                      {/* Full Name */}
+                      <div className="text-left">
+                        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">Full Name</label>
                         <input
                           type="text"
                           value={fullName}
                           onChange={handleNameChange}
-                          placeholder="John Doe"
-                          className="w-full p-3 h-9 rounded-lg border text-[14px] focus:ring-0 focus:border-1 outline-none border-border-border1  focus:border-primary-light bg-gray-0 dark:bg-gray-800 text-text-primary dark:text-text-dark"
+                          placeholder="Enter your full name"
+                          className="w-full p-3 h-9 rounded-lg border text-[14px] focus:ring-0 focus:border-1 outline-none border-border-border1 focus:border-primary-light bg-gray-0 dark:bg-gray-800 text-text-primary dark:text-text-dark"
                         />
-                        {/* Error Message */}
                         {nameError && (
-                          <p className="text-red-500 text-[12px] mt-1 pl-3">
+                          <p className="text-red-500 text-[12px] mt-1.5 flex items-center gap-1">
+                            <AlertCircle className="w-3.5 h-3.5" />
                             {nameError}
                           </p>
                         )}
                       </div>
 
-                      <div className="mb-4 text-left">
-                        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">
-                          Select Bank
-                        </label>
-                        <BankSelector
-                          bankName={bankName}
-                          setBankName={setBankName}
-                        />
+                      {/* Bank Selection */}
+                      <div className="text-left">
+                        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">Select Bank</label>
+                        <BankSelector bankName={bankName} setBankName={setBankName} />
                       </div>
 
-                      <div className="mb-4 text-left">
-                        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">
-                          Branch Name
-                        </label>
+                      {/* Branch Name */}
+                      <div className="text-left">
+                        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">Branch Name</label>
                         <input
                           type="text"
                           value={depositBranch}
                           onChange={handleBranchChange}
-                          placeholder="Galle Road Branch"
-                          className="w-full p-3 h-9 rounded-lg border text-[14px] focus:ring-0 focus:border-1 outline-none border-border-border1  focus:border-primary-light bg-gray-0 dark:bg-gray-800 text-text-primary dark:text-text-dark"
+                          placeholder="Enter branch name"
+                          className="w-full p-3 h-9 rounded-lg border text-[14px] focus:ring-0 focus:border-1 outline-none border-border-border1 focus:border-primary-light bg-gray-0 dark:bg-gray-800 text-text-primary dark:text-text-dark"
                         />
-                        {/* Error Message */}
                         {branchError && (
-                          <p className="text-red-500 text-[12px] mt-1 pl-3">
+                          <p className="text-red-500 text-[12px] mt-1.5 flex items-center gap-1">
+                            <AlertCircle className="w-3.5 h-3.5" />
                             {branchError}
                           </p>
                         )}
                       </div>
 
-                      <div className="mb-4 text-left">
-                        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">
-                          Amount (USD)
-                        </label>
+                      {/* Amount */}
+                      <div className="text-left">
+                        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">Donation Amount (USD)</label>
                         <input
                           type="number"
                           value={amount}
                           onChange={handleAmountChange}
                           onKeyDown={handleKeyDown}
-                          className="w-full px-3 py-2 text-sm border border-gray-200 outline-none rounded-lg focus:border-emerald-500 focus:ring-0"
-                          placeholder="Minimum $100"
+                          className="w-full p-3 h-9 rounded-lg text-[14px] border focus:ring-0 focus:border-1 outline-none border-border-border1 focus:border-primary-light bg-gray-0 dark:bg-gray-800 text-text-primary dark:text-text-dark"
+                          placeholder="$ 100.00"
                           min="100"
                         />
                         {amount < 100 && amount && (
-                          <p className="text-red-500 text-xs mt-1">
+                          <p className="text-red-500 text-[12px] mt-1.5 flex items-center gap-1">
+                            <AlertCircle className="w-3.5 h-3.5" />
                             {Amounterror}
                           </p>
                         )}
                       </div>
 
-                      <div className="flex flex-col w-full  h-full items-center space-y-3 mt-2   ">
-                        <label className="block text-[12px] text-left w-full ml-3 font-semibold text-gray-700 mt-2">
-                          Upload Payment Slip
-                        </label>
+                      {/* Payment Slip Upload */}
+                      <div className="text-left">
+                        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">Upload Payment Slip</label>
                         {selectedFiles.length === 0 ? (
-                          <div className="text-left w-full">
-                            <div
-                              className="border-2 border-dashed h-[120px] flex flex-col justify-center mx-[1px] items-center  border-emerald-200 rounded-lg p-4 text-center cursor-pointer hover:border-emerald-400 transition-colors"
-                              onClick={() => fileInputRef.current.click()}
-                            >
-                              <input
-                                type="file"
-                                ref={fileInputRef}
-                                multiple
-                                className="hidden"
-                                onChange={handleFileChange}
-                                accept=".png,.jpg,.pdf"
-                              />
-                              <p className="text-sm text-gray-600">
-                                Click to upload or drag and drop
-                              </p>
-                              <p className="text-xs text-gray-500 mt-1">
-                                Supported formats: PNG, PDF
-                              </p>
+                          <div
+                            className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50/50 transition-all duration-300 group"
+                            onClick={() => fileInputRef.current.click()}
+                          >
+                            <input type="file" ref={fileInputRef} multiple className="hidden" onChange={handleFileChange} accept=".png,.jpg,.pdf" />
+                            <div className="flex flex-col items-center">
+                              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-emerald-100 transition-colors">
+                                <img src={uploadimg} alt="Upload" className="w-8 h-8 opacity-60 group-hover:opacity-100" />
+                              </div>
+                              <p className="text-base font-medium text-gray-700 mb-1">Click to upload or drag and drop</p>
+                              <p className="text-base text-gray-500">PNG, JPG or PDF (Max. 10MB)</p>
                             </div>
                           </div>
                         ) : (
-                          <ul className="w-full h-full space-y-2 mt-4 top-0">
+                          <div className="space-y-2">
                             {selectedFiles.map((file, index) => (
-                              <li
+                              <div
                                 key={index}
-                                className="flex justify-between items-center p-2 bg-[rgb(246,246,246)]  rounded-[4px] hover:bg-green-100 text-sm"
+                                className="flex justify-between items-center p-3 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors"
                               >
-                                <span className="text-gray-700 text-left">
-                                  {file.name}
-                                </span>
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                    <Shield className="w-5 h-5 text-white" />
+                                  </div>
+                                  <span className="text-base font-medium text-gray-900">{file.name}</span>
+                                </div>
                                 <button
-                                  onClick={() =>
-                                    setSelectedFiles(
-                                      selectedFiles.filter(
-                                        (_, i) => i !== index
-                                      )
-                                    )
-                                  }
-                                  className="text-red-500 hover:text-red-600"
+                                  onClick={() => setSelectedFiles(selectedFiles.filter((_, i) => i !== index))}
+                                  className="text-red-500 hover:text-red-700 font-medium text-base hover:bg-red-50 px-3 py-1 rounded-md transition-colors"
                                 >
                                   Remove
                                 </button>
-                              </li>
+                              </div>
                             ))}
-                          </ul>
+                          </div>
                         )}
                       </div>
 
                       {message && (
-                        <p className="text-red-500 text-sm">{message}</p>
+                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                          <p className="text-red-600 text-base flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4" />
+                            {message}
+                          </p>
+                        </div>
                       )}
 
-                      <div className="flex space-x-3 w-full mt-5 justify-end">
+                      {/* Action Buttons */}
+                      <div className="flex gap-3 pt-2">
                         <button
                           type="button"
                           onClick={() => {
                             if (!isAuthenticated) {
-                              toast.error(
-                                "You must be logged in to make a payment."
-                              );
+                              toast.error("You must be logged in to make a payment.");
                               return;
                             }
                             if (!selectedDisaster) {
-                              toast.error(
-                                "Please select a disaster before submitting."
-                              );
+                              toast.error("Please select a disaster before submitting.");
                               return;
                             }
                             handleSubmit();
                           }}
-                          className="px-4 py-1 bg-primary-light text-white text-sm rounded-md hover:bg-hover-light"
+                          className={`w-full bg-primary-light h-10 text-white rounded-lg font-semibold mt-6 transition duration-300 ${
+                            loading ? "opacity-50" : "hover:bg-hover-light dark:hover:bg-hover-dark"
+                          }`}
                           disabled={loading}
                         >
-                          {loading ? "Submitting..." : "Submit"}
+                          {loading ? "Processing..." : "Submit Donation"}
                         </button>
                         <button
                           type="button"
                           onClick={clearFields}
-                          className="px-4 py-1 border border-gray-400 text-sm rounded-md hover:bg-gray-200"
+                          className="w-full bg-white border border-gray-300 h-10 text-gray-700 rounded-lg font-semibold mt-6 transition duration-300 hover:bg-gray-50"
                         >
                           Clear
                         </button>
@@ -678,83 +626,79 @@ function Payment() {
                     </div>
                   )}
                 </div>
-                <div className="w-full  mt-10 max-w-[350px]  border rounded-2xl h-full p-4 overflow-y-auto">
-                  <span className="text-gray-700 text-[14px] font-semibold ">
-                    Funding Recodes
-                  </span>
-                  {loading ? (
-                    <div className="flex justify-center items-center h-40">
-                      <p className="text-gray-500">Loading payments...</p>
+                {/* Funding Records Sidebar */}
+                <div className="w-full max-w-[380px] border-l border-gray-200 pl-6">
+                  <div className="bg-gray-50 rounded-lg p-5 h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+                    <div className="flex items-center justify-between mb-5 pb-3 border-b border-gray-300">
+                      <h3 className="text-base font-bold text-gray-900">Payment History</h3>
+                      <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                        <Clock className="w-4 h-4 text-emerald-700" />
+                      </div>
                     </div>
-                  ) : payments.length === 0 ? (
-                    <div className="text-center text-gray-500">
-                      <p>No payments found.</p>
-                    </div>
-                  ) : (
-                    <div className="mt-2">
-                      {payments.map((payment) => (
-                        <div
-                          key={payment._id}
-                          className=" px-2 py-3 bg-white border-t border-gray-100  transition-shadow duration-300"
-                        >
-                          {/* Body */}
-                          <div className="flex flex-row text-[13px] justify-between items-center">
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-2 text-sm text-gray-600">
-                                <span className="font-medium text-gray-700">
-                                  Transaction:
-                                </span>
-                                <span className=" text-gray-400">
-                                  #{payment._id?.slice(-6) || "N/A"}
-                                </span>
+                    {loading ? (
+                      <div className="flex flex-col justify-center items-center h-40 gap-3">
+                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600"></div>
+                        <p className="text-gray-500 text-base">Loading payments...</p>
+                      </div>
+                    ) : payments.length === 0 ? (
+                      <div className="text-center py-12">
+                        <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Heart className="w-8 h-8 text-gray-400" />
+                        </div>
+                        <p className="text-gray-500 text-base font-medium">No payments found</p>
+                        <p className="text-gray-400 text-base mt-1">Your donation history will appear here</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {payments.map((payment) => (
+                          <div
+                            key={payment._id}
+                            className="px-4 py-4 bg-white border border-gray-200 rounded-lg hover:shadow-sm transition-all duration-200"
+                          >
+                            {/* Transaction Details */}
+                            <div className="flex justify-between items-start mb-3">
+                              <div className="flex flex-col gap-1.5 text-left">
+                                <div className="flex items-center gap-2 text-base">
+                                  <span className="font-semibold text-gray-700">Transaction ID:</span>
+                                  <span className="text-gray-500 font-mono">#{payment._id?.slice(-8) || "N/A"}</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-base">
+                                  <DollarSign className="w-4 h-4 text-emerald-600" />
+                                  <span className="font-bold text-gray-900">${payment.amount.toFixed(2)}</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-base text-gray-500">
+                                  <Calendar className="w-3.5 h-3.5" />
+                                  <span>
+                                    {new Date(payment.createdAt).toLocaleDateString("en-US", {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                    })}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex gap-2">
-                                <span className="font-medium text-gray-700">
-                                  Amount:
-                                </span>
-                                <span className=" text-gray-400">
-                                  ${payment.amount.toFixed(2)}
-                                </span>
-                              </div>
-                              <div className="flex gap-2">
-                                <span className="font-medium text-gray-700">
-                                  Date:
-                                </span>
-                                <span className=" text-gray-400">
-                                  {new Date(
-                                    payment.createdAt
-                                  ).toLocaleDateString()}
-                                </span>
-                              </div>
-                            </div>
 
-                            <div className="flex justify-between items-center mb-2">
+                              {/* Status Badge */}
                               <span
-                                className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold capitalize ${
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-base font-bold capitalize ${
                                   payment.status === "Successful"
-                                    ? "bg-green-100 text-green-600"
+                                    ? "bg-green-100 text-green-700 border border-green-200"
                                     : payment.status === "Pending"
-                                      ? "bg-yellow-100 text-yellow-600"
-                                      : "bg-red-100 text-red-600"
+                                      ? "bg-yellow-100 text-yellow-700 border border-yellow-200"
+                                      : "bg-red-100 text-red-700 border border-red-200"
                                 }`}
                               >
-                                {payment.status === "Successful" && (
-                                  <BadgeCheck size={14} />
-                                )}
-                                {payment.status === "Pending" && (
-                                  <Clock size={14} />
-                                )}
-                                {payment.status === "Failed" && (
-                                  <XCircle size={14} />
-                                )}
+                                {payment.status === "Successful" && <BadgeCheck size={12} />}
+                                {payment.status === "Pending" && <Clock size={12} />}
+                                {payment.status === "Failed" && <XCircle size={12} />}
                                 {payment.status}
                               </span>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

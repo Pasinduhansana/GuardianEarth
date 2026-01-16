@@ -10,14 +10,7 @@ import DisasterLineChart from "../Components/admin-dashboard/DisasterLineChart.j
 import Dashboard_grid from "../Components/admin-dashboard/Dashboard-Datagrid.jsx";
 import toast from "react-hot-toast";
 import Modal from "../Components/main-components/Model";
-import {
-  Bell,
-  PiggyBank,
-  HandCoins,
-  Users,
-  BarChart3,
-  FileDown,
-} from "lucide-react";
+import { Bell, PiggyBank, HandCoins, Users, BarChart3, FileDown, Plus } from "lucide-react";
 
 const Dashboard = () => {
   const [payment_data, setPayment_data] = useState([]);
@@ -75,9 +68,7 @@ const Dashboard = () => {
     const updatedRecode = {
       Donations: getTotalDonations().toFixed(2),
       savings: (getTotalDonations() - getTotalDonations() * 0.87).toFixed(2),
-      Distribution: (
-        users.filter((u) => u.status === "active").length / users.length || 0
-      ).toFixed(2),
+      Distribution: (users.filter((u) => u.status === "active").length / users.length || 0).toFixed(2),
       BalanceAmount: (getTotalDonations() * 0.87).toFixed(2),
       usertraffic: getActiveUsersCount(),
       disasters: disasterTypeCounts.map((d) => ({
@@ -91,14 +82,11 @@ const Dashboard = () => {
     };
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/dashboard/${recodeId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedRecode),
-        }
-      );
+      const response = await fetch(`http://localhost:5000/api/dashboard/${recodeId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedRecode),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to sync recode");
@@ -125,18 +113,9 @@ const Dashboard = () => {
         const tempDate = new Date(date.getTime());
         tempDate.setHours(0, 0, 0, 0);
         // Thursday in current week decides the year.
-        tempDate.setDate(
-          tempDate.getDate() + 3 - ((tempDate.getDay() + 6) % 7)
-        );
+        tempDate.setDate(tempDate.getDate() + 3 - ((tempDate.getDay() + 6) % 7));
         const week1 = new Date(tempDate.getFullYear(), 0, 4);
-        const weekNo =
-          1 +
-          Math.round(
-            ((tempDate.getTime() - week1.getTime()) / 86400000 -
-              3 +
-              ((week1.getDay() + 6) % 7)) /
-              7
-          );
+        const weekNo = 1 + Math.round(((tempDate.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7);
         key = `W${weekNo}-${tempDate.getFullYear()}`;
       } else if (period === "Monthly") {
         key = `${date.toLocaleString("default", { month: "short" })}-${date.getFullYear()}`;
@@ -172,12 +151,7 @@ const Dashboard = () => {
 
   const chartData = getChartDataByPeriod(payment_data, chartPeriod);
 
-  const latestDisasters = [...disasters]
-    .sort(
-      (a, b) =>
-        new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt)
-    )
-    .slice(0, 3);
+  const latestDisasters = [...disasters].sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt)).slice(0, 3);
 
   // Export recodes as CSV
   const handleExportCSV = () => {
@@ -188,13 +162,7 @@ const Dashboard = () => {
     const headers = Object.keys(Datarecode[0]);
     const csvRows = [
       headers.join(","),
-      ...Datarecode.map((row) =>
-        headers
-          .map(
-            (field) => `"${(row[field] ?? "").toString().replace(/"/g, '""')}"`
-          )
-          .join(",")
-      ),
+      ...Datarecode.map((row) => headers.map((field) => `"${(row[field] ?? "").toString().replace(/"/g, '""')}"`).join(",")),
     ];
     const csvContent = "data:text/csv;charset=utf-8," + csvRows.join("\n");
     const encodedUri = encodeURI(csvContent);
@@ -249,19 +217,14 @@ const Dashboard = () => {
     });
 
     // Sort keys chronologically
-    const sortedKeys = Object.keys(groupMap).sort(
-      (a, b) => new Date(a) - new Date(b)
-    );
+    const sortedKeys = Object.keys(groupMap).sort((a, b) => new Date(a) - new Date(b));
     return sortedKeys.map((date) => ({
       date,
       count: groupMap[date],
     }));
   };
 
-  const disasterLineChartData = getDisasterFrequencyByDate(
-    disasters,
-    chartPeriod
-  );
+  const disasterLineChartData = getDisasterFrequencyByDate(disasters, chartPeriod);
 
   const getActiveUsersCount = () => {
     if (!users || users.length === 0) return 0;
@@ -272,10 +235,7 @@ const Dashboard = () => {
     if (!payment_data || payment_data.length === 0) return 0;
     // If payment_data.amount is a string with "$", remove it and convert to number
     return payment_data.reduce((sum, p) => {
-      let amount =
-        typeof p.amount === "string"
-          ? Number(p.amount.replace(/[^0-9.-]+/g, ""))
-          : p.amount;
+      let amount = typeof p.amount === "string" ? Number(p.amount.replace(/[^0-9.-]+/g, "")) : p.amount;
       return sum + (Number(amount) || 0);
     }, 0);
   };
@@ -342,9 +302,7 @@ const Dashboard = () => {
       ...newRecode,
       Donations: getTotalDonations().toFixed(2),
       savings: (getTotalDonations() - getTotalDonations() * 0.87).toFixed(2),
-      Distribution: (
-        users.filter((u) => u.status === "active").length / users.length || 0
-      ).toFixed(2),
+      Distribution: (users.filter((u) => u.status === "active").length / users.length || 0).toFixed(2),
       BalanceAmount: (getTotalDonations() * 0.87).toFixed(2),
       usertraffic: getActiveUsersCount(),
 
@@ -434,289 +392,362 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-br  from-gray-50 to-gray-200 min-h-screen text-gray-800">
-        <div className="flex">
-          <div className="flex-1 px-8 py-4">
-            {/* Header */}
-            <div className="flex justify-between items-center mb-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Header */}
+          <div className="mb-8">
+            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
               <div className="text-left">
-                <h1 className="text-2xl font-bold tracking-tight text-gray-900 mb-1">
-                  Dashboard Analysis
-                </h1>
-                <p className="text-gray-500 text-[14px]">
-                  Monitor, alert, and track resources for effective response.
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+                <p className="text-gray-600 text-base flex items-center gap-2">
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                  Monitor, alert, and track resources for effective disaster response
                 </p>
               </div>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-3">
                 <div className="relative">
                   <input
-                    className="bg-white border pl-10 rounded-full py-2 px-5 w-72 outline-none text-sm shadow-sm focus:ring-1 focus:ring-green-400 transition"
-                    placeholder="Search"
+                    className="bg-white border border-gray-300 pl-10 rounded-lg py-2.5 px-5 w-72 outline-none text-sm shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+                    placeholder="Search dashboard..."
                     type="text"
                   />
                   <i className="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 </div>
                 <button
                   onClick={handleExportCSV}
-                  className="flex items-center gap-2 px-4 py-2 bg-white border-green-500 text-[14px] border text-green-500 rounded-lg shadow hover:bg-green-100 transition"
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-md transition-all duration-300 text-sm font-medium shadow-md whitespace-nowrap flex items-center gap-2"
                   title="Export report as CSV"
                 >
-                  <FileDown className="w-5 h-5" />
+                  <FileDown className="w-4 h-4" />
                   Export Report
                 </button>
               </div>
             </div>
-            {/* Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 mb-4">
-              <div className="flex items-center bg-white p-5 rounded-2xl shadow-sm hover:shadow-xl transition gap-4 border border-gray-100">
-                <HandCoins className="w-14 h-14 text-green-500 bg-green-50 rounded-xl p-2" />
-                <div className="text-left w-full">
-                  <p className="text-gray-400 text-sm font-medium">Donations</p>
-                  <p className="text-[20px] font-semibold text-gray-700">
-                    ${getTotalDonations().toFixed(2)}
-                  </p>
+            {/* Stats Cards - Compact Modern Design */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
+              <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-100 transition">
+                    <HandCoins className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-500 mb-0.5">Total Donations</p>
+                    <p className="text-xl font-bold text-gray-900 truncate">${getTotalDonations().toFixed(2)}</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center h-[100px] bg-white p-5 rounded-2xl shadow-sm hover:shadow-xl transition gap-4 border border-gray-100">
-                <PiggyBank className="w-14 h-14 text-blue-500 bg-blue-50 rounded-xl p-2" />
-                <div className="text-left w-full">
-                  <p className="text-gray-400 text-sm font-medium">Savings</p>
-                  <p className="text-[20px] font-semibold text-gray-700">
-                    $
-                    {getTotalDonations() -
-                      (getTotalDonations() * 0.87).toFixed(2)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center h-[100px] bg-white p-5 rounded-2xl shadow-sm hover:shadow-xl transition gap-4 border border-gray-100">
-                <BarChart3 className="w-16 h-16 text-purple-500 bg-purple-50 rounded-2xl p-3 opacity-70" />
-
-                <div class=" text-left w-full ">
-                  <p className="text-gray-400 text-sm font-medium">
-                    Distribution
-                  </p>
-                  <p class="text-[18px] font-semibold text-gray-700">
-                    {(
-                      users.filter((user) => user.status === "active").length /
-                        users.length || 0
-                    ).toFixed(2)}
-                  </p>
-                  <p class="text-gray-400 text-[12px]">
-                    <span className="text-green-400  font-semibold">+11% </span>
-                    since last month
-                  </p>
+              <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition">
+                    <PiggyBank className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-500 mb-0.5">Savings</p>
+                    <p className="text-xl font-bold text-gray-900 truncate">${getTotalDonations() - (getTotalDonations() * 0.87).toFixed(2)}</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center h-[100px] bg-white p-5 rounded-2xl shadow-sm hover:shadow-xl transition gap-4 border border-gray-100">
-                <PiggyBank className="w-16 h-16 text-yellow-500 bg-yellow-50 rounded-2xl p-3 opacity-70" />
-
-                <div class=" text-left w-full ">
-                  <p className="text-gray-400 text-sm font-medium">
-                    Balance Amount
-                  </p>
-                  <p class="text-[18px] text-gray-700 font-semibold">
-                    ${(getTotalDonations() * 0.87).toFixed(2)}
-                  </p>
-                  <p class="text-gray-400 text-[12px]">
-                    <span className="text-green-400  font-semibold">+24% </span>
-                    since last month
-                  </p>
+              <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 transition">
+                    <BarChart3 className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-500 mb-0.5">Distribution</p>
+                    <p className="text-xl font-bold text-gray-900">
+                      {(users.filter((user) => user.status === "active").length / users.length || 0).toFixed(2)}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center h-[100px] bg-white p-5 rounded-2xl shadow-sm hover:shadow-xl transition gap-4 border border-gray-100">
-                <Users className="w-16 h-16 text-cyan-500 bg-cyan-50 rounded-2xl p-3 opacity-70" />
+              <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-yellow-100 transition">
+                    <PiggyBank className="w-5 h-5 text-yellow-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-500 mb-0.5">Balance Amount</p>
+                    <p className="text-xl font-bold text-gray-900 truncate">${(getTotalDonations() * 0.87).toFixed(2)}</p>
+                  </div>
+                </div>
+              </div>
 
-                <div class=" text-left w-full ">
-                  <p className="text-gray-400 text-sm font-medium">
-                    User Traffic
-                  </p>
-                  <p class="text-[24px] font-semibold">
-                    {getActiveUsersCount()}
-                  </p>
-                  <p class="text-gray-400 text-[12px]">
-                    <span className="text-green-400  font-semibold">+450 </span>
-                    since last week
-                  </p>
+              <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-cyan-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-cyan-100 transition">
+                    <Users className="w-5 h-5 text-cyan-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-500 mb-0.5">User Traffic</p>
+                    <p className="text-xl font-bold text-gray-900">{getActiveUsersCount()}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-              <div class="bg-white p-4 rounded-lg shadow col-span-2">
-                <div class="flex justify-between items-center mb-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 col-span-2">
+                <div className="flex justify-between items-center mb-6">
                   <div className="flex flex-col text-left">
-                    <p class="text-lg font-semibold">This Month Donation</p>
-                    <p class="text-[13px] font-normal text-gray-400">
-                      Analysis of Donations for the Current Month
-                    </p>
+                    <h2 className="text-xl font-bold text-gray-900">Monthly Donation Trends</h2>
+                    <p className="text-sm text-gray-500 mt-1">Analysis of donations for the current month</p>
                   </div>
-                  <div className="flex flex-row-reverse gap-3 mt-2 items-center justify-center">
+                  <div className="flex gap-3 items-center">
+                    <div className="flex items-center h-7 justify-center bg-emerald-50 rounded-full border border-emerald-200">
+                      <p className="text-emerald-700 px-3 font-semibold text-xs">On track</p>
+                    </div>
                     <select
-                      className="border px-3 py-1 w-[120px] h-[30px] rounded-[4px] text-text-secondary outline-none text-[13px] border-gray-300 mr-3"
+                      className="border px-4 py-1.5 rounded-lg text-sm outline-none border-emerald-200 bg-white text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
                       value={chartPeriod}
                       onChange={(e) => setChartPeriod(e.target.value)}
                     >
-                      <option value="Daily">Daily (Daily)</option>
-                      <option value="Weekly">Weekly (Weekly)</option>
-                      <option value="Monthly">Monthly (Monthly)</option>
-                      <option value="Yearly">Yearly (Yearly)</option>
+                      <option value="Daily">Daily</option>
+                      <option value="Weekly">Weekly</option>
+                      <option value="Monthly">Monthly</option>
+                      <option value="Yearly">Yearly</option>
                     </select>
-                    <div className="flex items-center h-[25px] justify-center bg-green-200 rounded-[20px]">
-                      <p class="text-green-600 px-4 font-medium py-[1.5px] text-[13px]">
-                        On track
-                      </p>
-                    </div>
                   </div>
                 </div>
                 <Verticle_Barchart data={chartData} height={"24rem"} />
               </div>
-              <div class="bg-white p-4 rounded-lg shadow">
+              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
                 <div className="flex flex-col text-left">
-                  <p class="text-lg font-semibold">Disaster Types</p>
-                  <p class="text-[13px] font-normal text-gray-400">
-                    Analysis based on the disaster types
-                  </p>
+                  <h2 className="text-xl font-bold text-gray-900 mb-1">Disaster Types</h2>
+                  <p className="text-sm text-gray-500 mb-4">Distribution analysis by disaster types</p>
                   <PieChart data={disasterTypeCounts} />
                 </div>
               </div>
             </div>
 
-            {/* Second Row Grid 1st Card*/}
-            <div class="grid grid-cols-1 lg:grid-cols-[1fr_200px_1fr]  gap-4 mb-4">
-              <div class="bg-white p-4 rounded-lg shadow ">
-                <div className="flex flex-col text-left ">
-                  <p class="text-lg font-semibold">Disaster Frequency</p>
-                  <p class="text-[13px] font-normal text-gray-400 ">
-                    Analysis based on the disaster Frequency
-                  </p>
-                  <div className="pt-2">
-                    <DisasterLineChart
-                      data={disasterLineChartData}
-                      height={470}
-                    />
+            {/* System Performance & Activity Statistics */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+              {/* Response Time Card */}
+              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-col text-left">
+                    <h3 className="text-lg font-bold text-gray-900">Response Rate</h3>
+                    <p className="text-xs text-gray-500 mt-1">System performance metrics</p>
+                  </div>
+                  <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
+                    <BarChart3 className="w-6 h-6 text-emerald-600" />
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Disaster Reports</span>
+                    <span className="text-sm font-semibold text-gray-900">{disasters.length}</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2">
+                    <div className="bg-emerald-500 h-2 rounded-full" style={{ width: `${Math.min((disasters.length / 100) * 100, 100)}%` }}></div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Donations Received</span>
+                    <span className="text-sm font-semibold text-gray-900">{payment_data.length}</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2">
+                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${Math.min((payment_data.length / 50) * 100, 100)}%` }}></div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Active Users</span>
+                    <span className="text-sm font-semibold text-gray-900">{users.length}</span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-2">
+                    <div className="bg-purple-500 h-2 rounded-full" style={{ width: `${Math.min((users.length / 200) * 100, 100)}%` }}></div>
                   </div>
                 </div>
               </div>
-              {/* Second Row Grid 2nd Card*/}
-              <div className="bg-white p-4 rounded-lg shadow mb-6 h-full">
-                <h2 className="text-lg font-semibold mb-2 text-gray-700 pb-2 border-b border-gray-200">
-                  Latest Disasters
-                </h2>
-                <div className="flex flex-col gap-4">
+
+              {/* Quick Stats Grid */}
+              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <div className="flex flex-col text-left mb-4">
+                  <h3 className="text-lg font-bold text-gray-900">Quick Overview</h3>
+                  <p className="text-xs text-gray-500 mt-1">Key platform metrics</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-lg border border-emerald-200">
+                    <p className="text-xs font-medium text-emerald-700 mb-1">Total Reports</p>
+                    <p className="text-2xl font-bold text-emerald-900">{disasters.length}</p>
+                    <p className="text-xs text-emerald-600 mt-1">↑ Active tracking</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+                    <p className="text-xs font-medium text-blue-700 mb-1">Funds Raised</p>
+                    <p className="text-2xl font-bold text-blue-900">${getTotalDonations().toFixed(0)}</p>
+                    <p className="text-xs text-blue-600 mt-1">↑ Total collected</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+                    <p className="text-xs font-medium text-purple-700 mb-1">Users</p>
+                    <p className="text-2xl font-bold text-purple-900">{users.length}</p>
+                    <p className="text-xs text-purple-600 mt-1">Registered</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-amber-50 to-amber-100 p-4 rounded-lg border border-amber-200">
+                    <p className="text-xs font-medium text-amber-700 mb-1">Donations</p>
+                    <p className="text-2xl font-bold text-amber-900">{payment_data.length}</p>
+                    <p className="text-xs text-amber-600 mt-1">Transactions</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Activity Timeline */}
+              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-col text-left">
+                    <h3 className="text-lg font-bold text-gray-900">Recent Activity</h3>
+                    <p className="text-xs text-gray-500 mt-1">Last 24 hours</p>
+                  </div>
+                  <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
+                    <Bell className="w-5 h-5 text-emerald-600" />
+                  </div>
+                </div>
+                <div className="space-y-3 max-h-[200px] overflow-y-auto pr-2">
+                  <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-900 font-medium">New disaster reported</p>
+                      <p className="text-xs text-gray-500">
+                        {disasters.length > 0
+                          ? new Date(disasters[disasters.length - 1]?.date || disasters[disasters.length - 1]?.createdAt).toLocaleTimeString()
+                          : "No data"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-900 font-medium">Donation received</p>
+                      <p className="text-xs text-gray-500">
+                        {payment_data.length > 0 ? new Date(payment_data[payment_data.length - 1]?.createdAt).toLocaleTimeString() : "No data"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-900 font-medium">New user registered</p>
+                      <p className="text-xs text-gray-500">
+                        {users.length > 0 ? new Date(users[users.length - 1]?.createdAt).toLocaleTimeString() : "No data"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-900 font-medium">System update</p>
+                      <p className="text-xs text-gray-500">2 hours ago</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Disaster Frequency and Latest Disasters - Horizontal Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 mb-6">
+              {/* Left: Disaster Frequency Chart */}
+              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+                <div className="flex flex-col text-left">
+                  <h2 className="text-xl font-bold text-gray-900 mb-1">Disaster Frequency</h2>
+                  <p className="text-sm text-gray-500 mb-4">Analysis based on the disaster frequency</p>
+                  <div className="pt-2">
+                    <DisasterLineChart data={disasterLineChartData} height={470} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Latest Disasters Card */}
+              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 flex flex-col">
+                <div className="flex flex-col text-left pb-4 border-b border-gray-200 flex-shrink-0">
+                  <h2 className="text-xl font-bold text-gray-900 mb-1">Latest Disasters</h2>
+                  <p className="text-sm text-gray-500">Recent disaster updates and alerts</p>
+                </div>
+                <div className="overflow-y-auto pr-2 mt-4 max-h-[520px]">
                   {latestDisasters.length === 0 ? (
-                    <p className="text-gray-400 text-sm">
-                      No recent disasters found.
-                    </p>
+                    <div className="flex items-center justify-center h-full py-8">
+                      <p className="text-gray-400 text-sm text-center">No recent disasters found.</p>
+                    </div>
                   ) : (
-                    latestDisasters.map((disaster, idx) => (
-                      <div
-                        key={disaster._id || idx}
-                        className="flex items-center gap-4 border-b last:border-b-0 pb-3 last:pb-0"
-                      >
-                        <div className="flex flex-col text-left">
-                          <span className="font-medium text-gray-700">
-                            {disaster.disasterType}
-                          </span>
-                          <span className="text-[13px] mt-2 text-gray-500">
-                            {disaster.description
-                              ? disaster.description.length > 100
-                                ? disaster.description.slice(0, 100) + "..."
-                                : disaster.description
-                              : ""}
-                          </span>
-                          <span className="text-[13px] mt-2 text-gray-400">
-                            {new Date(
-                              disaster.date || disaster.createdAt
-                            ).toLocaleString()}
-                          </span>
+                    <div className="flex flex-col gap-3">
+                      {latestDisasters.map((disaster, idx) => (
+                        <div
+                          key={disaster._id || idx}
+                          className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100"
+                        >
+                          <div className="flex-shrink-0 w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
+                            <span className="text-red-600 text-lg">⚠️</span>
+                          </div>
+                          <div className="flex flex-col text-left flex-1 min-w-0">
+                            <span className="font-semibold text-gray-900 text-sm mb-1 truncate">{disaster.disasterType}</span>
+                            <span className="text-xs text-gray-600 mb-2 line-clamp-2">
+                              {disaster.description
+                                ? disaster.description.length > 80
+                                  ? disaster.description.slice(0, 80) + "..."
+                                  : disaster.description
+                                : ""}
+                            </span>
+                            <span className="text-xs text-gray-400">
+                              {new Date(disaster.date || disaster.createdAt).toLocaleString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow w-full">
-                <div className="flex flex-col text-left w-full mb-4 border-b border-gray-200 pb-2">
-                  <p className="text-lg font-semibold">Registered Users</p>
-                  <p className="text-[13px] font-normal text-gray-400 w-full">
-                    List of registered users for Guardian Earth
-                  </p>
-                </div>
-                <ul
-                  className="max-h-[470px] overflow-y-auto pr-2"
-                  style={{ minHeight: "180px" }}
-                >
-                  {users && users.length > 0 ? (
-                    users.map((user, index) => (
-                      <li
+            </div>
+
+            {/* Registered Users Card - Separate Row */}
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-6">
+              <div className="flex flex-col text-left pb-4 border-b border-gray-200 flex-shrink-0">
+                <h2 className="text-xl font-bold text-gray-900 mb-1">Registered Users</h2>
+                <p className="text-sm text-gray-500">Active users on Guardian Earth platform</p>
+              </div>
+              <div className="mt-4">
+                {users && users.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
+                    {users.map((user, index) => (
+                      <div
                         key={user._id || index}
-                        className="flex items-center text-left gap-4 my-2 px-3 py-3 rounded-xl hover:bg-green-50 transition"
+                        className="flex items-center text-left gap-3 p-3 rounded-lg hover:bg-emerald-50 transition-all duration-200 group border border-gray-100"
                       >
                         <div className="flex-shrink-0">
                           <img
                             alt={user.name}
-                            className="rounded-full w-10 h-10 border border-green-200 shadow"
-                            src={
-                              user.profile_img || "https://placehold.co/40x40"
-                            }
+                            className="rounded-full w-10 h-10 border-2 border-emerald-100 shadow-sm group-hover:border-emerald-300 transition"
+                            src={user.profile_img || "https://placehold.co/40x40"}
                           />
                         </div>
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-gray-900 text-[15px]">
-                            {user.name}
-                          </span>
-                          <span className="text-sm text-gray-500">
-                            {user.email}
-                          </span>
+                        <div className="flex flex-col flex-1 min-w-0">
+                          <span className="font-semibold text-gray-900 text-sm truncate">{user.name}</span>
+                          <span className="text-xs text-gray-500 truncate">{user.email}</span>
                         </div>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-gray-400 text-sm py-4">
-                      No users found.
-                    </li>
-                  )}
-                </ul>
-              </div>{" "}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gray-400 text-sm py-8 text-center">No users found.</div>
+                )}
+              </div>
             </div>
 
-            <div class="bg-white p-4 rounded-lg shadow">
-              <Dashboard_grid
-                recodes={datasetRecords}
-                fetchdata={fetchDatasetRecords}
-                onSync={handleSyncRecode}
-                onLoadDataset={handleLoadDataset}
-              />
-            </div>
-
-            <div class="bg-white p-4 rounded-lg shadow flex flex-col justify-center items-center">
-              {/* Button to toggle form visibility */}
-              <button
-                onClick={() => setIsFormVisible(true)}
-                className="px-4 py-2 w-[200px] bg-green-500 text-white rounded-lg mb-4 h-[35px] flex items-center justify-center"
-              >
-                Add New Recode
-              </button>
+            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-6">
+              <Dashboard_grid recodes={datasetRecords} fetchdata={fetchDatasetRecords} onSync={handleSyncRecode} onLoadDataset={handleLoadDataset} />
             </div>
           </div>
         </div>
       </div>
       {/* Modal for Add New Recode */}
-      <Modal
-        isOpen={isFormVisible}
-        onClose={() => setIsFormVisible(false)}
-        title="Add New Recode"
-      >
+      <Modal isOpen={isFormVisible} onClose={() => setIsFormVisible(false)} title="Add New Recode">
         <form onSubmit={handleFormSubmit} className="bg-white p-4 rounded-lg ">
           <div className="flex flex-col gap-6  bg-white rounded-lg ">
             {/* Recode ID */}
             <div>
-              <label className="text-sm font-semibold text-gray-800">
-                Recode ID
-              </label>
+              <label className="text-sm font-semibold text-gray-800">Recode ID</label>
               <input
                 type="text"
                 name="id"
@@ -727,9 +758,7 @@ const Dashboard = () => {
             </div>
             {/* Recode Remark */}
             <div>
-              <label className="text-sm font-semibold text-gray-800">
-                Recode Remark
-              </label>
+              <label className="text-sm font-semibold text-gray-800">Recode Remark</label>
               <textarea
                 name="remark"
                 value={remark}
@@ -740,9 +769,7 @@ const Dashboard = () => {
             </div>
             {/* Status */}
             <div>
-              <label className="text-sm font-semibold text-gray-800">
-                Status
-              </label>
+              <label className="text-sm font-semibold text-gray-800">Status</label>
               <select
                 name="status"
                 value={status}

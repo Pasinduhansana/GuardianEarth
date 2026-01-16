@@ -17,7 +17,7 @@ import Profile from "./Pages/Profile";
 //Main Component Imports
 import Home from "./components/main-components/homecomp/home";
 import About from "./components/main-components/About";
-import FloodPredictor from "./Components/main-components/prediction-model/floodPredictor";
+import FloodPredictor from "./components/main-components/prediction-model/FloodPredictor";
 import { UserManagement } from "./Pages/UserManagement";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./Components/main-components/ProtectedRoute";
@@ -33,18 +33,11 @@ import PostView from "./components/community-support/PostView";
 import ViewPosts from "./components/community-support/adminPostsView";
 import Navbar from "./Components/main-components/Navbar";
 
-const hideNavbarRoutes = [
-  "/login",
-  "/register",
-  "/forgot-password",
-  "/reset-password",
-];
+const hideNavbarRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
 
 const Layout = ({ children }) => {
   const location = useLocation();
-  const hideNavbar = hideNavbarRoutes.some((route) =>
-    location.pathname.startsWith(route)
-  );
+  const hideNavbar = hideNavbarRoutes.some((route) => location.pathname.startsWith(route));
 
   return (
     <>

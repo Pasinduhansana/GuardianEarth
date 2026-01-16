@@ -2,13 +2,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const Dashboard_grid = ({
-  recodes,
-  loading,
-  fetchdata,
-  onSync,
-  onLoadDataset,
-}) => {
+const Dashboard_grid = ({ recodes, loading, fetchdata, onSync, onLoadDataset }) => {
   const handleDelete = async (id) => {
     toast(
       (t) => (
@@ -18,9 +12,7 @@ const Dashboard_grid = ({
             <button
               onClick={async () => {
                 try {
-                  await axios.delete(
-                    `http://localhost:5000/api/Dashboard/${id}`
-                  );
+                  await axios.delete(`http://localhost:5000/api/Dashboard/${id}`);
                   fetchdata();
                   toast.dismiss(t.id);
                   toast.success("Recode deleted successfully!");
@@ -33,10 +25,7 @@ const Dashboard_grid = ({
             >
               Delete
             </button>
-            <button
-              onClick={() => toast.dismiss(t.id)}
-              className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition"
-            >
+            <button onClick={() => toast.dismiss(t.id)} className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">
               Cancel
             </button>
           </div>
@@ -48,89 +37,84 @@ const Dashboard_grid = ({
 
   return (
     <>
-      <div className="w-auto mx-auto">
-        {/* Payment Grid */}
-        <div className="grid grid-cols-[1fr,1fr,2fr,1fr,1fr] text-center gap-y-2">
-          {/* Table Headers */}
-          {[
-            "Recode ID",
-            "Recode Date",
-            "Recode Remark",
-            "Status",
-            "Action",
-          ].map((header) => (
-            <span
-              key={header}
-              className="text-[13px] text-left font-semibold text-text-secondary"
-            >
-              {header}
-            </span>
-          ))}
+      <div className="w-full">
+        {/* Table Container */}
+        <div className="overflow-x-auto rounded-lg border border-gray-200">
+          <table className="w-full border-collapse">
+            {/* Table Head */}
+            <thead>
+              <tr className="bg-gray-50 border-b border-gray-200">
+                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700 w-[120px]">Recode ID</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700 w-[140px]">Recode Date</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">Recode Remark</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700 w-[120px]">Status</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700 w-[280px]">Action</th>
+              </tr>
+            </thead>
 
-          {/* Separator */}
-          <div className="col-span-6 mt-2 border-[1px] border-border-border1"></div>
+            {/* Table Body */}
+            <tbody className="bg-white">
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="text-center py-12 text-sm text-gray-500">
+                    Loading recodes...
+                  </td>
+                </tr>
+              ) : recodes.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="text-center py-12 text-sm text-gray-500">
+                    No Recodes found.
+                  </td>
+                </tr>
+              ) : (
+                recodes.map((recode, index) => (
+                  <tr key={recode.Id || index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150">
+                    <td className="px-6 py-4 text-sm text-left text-gray-800 font-medium align-middle">
+                      {recode.id ? recode.id.slice(-5) : recode.Id ? recode.Id.slice(-5) : "N/A"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-left text-gray-600 align-middle">
+                      {recode.date ? recode.date.slice(-5) : recode.date ? recode.date.slice(-5) : "N/A"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-left text-gray-600 align-middle">
+                      <span className="line-clamp-2">{recode.remark}</span>
+                    </td>
+                    <td className="px-6 py-4 align-middle">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        Saved
+                      </span>
+                    </td>
 
-          {/* Table Body */}
-          {loading ? (
-            <p className="col-span-6 text-[13px] font-semibold text-text-secondary">
-              Loading recodes...
-            </p>
-          ) : recodes.length === 0 ? (
-            <p className="col-span-6 text-[13px] font-semibold text-text-secondary">
-              No Recodes found.
-            </p>
-          ) : (
-            recodes.map((recode) => (
-              <React.Fragment key={recode.Id}>
-                <span className="text-[13px] text-left font-normal text-text-secondary">
-                  {recode.id
-                    ? recode.id.slice(-5)
-                    : recode.Id
-                      ? recode.Id.slice(-5)
-                      : "N/A"}
-                </span>
-                <span className="text-[13px] text-left font-normal text-text-secondary">
-                  {recode.date
-                    ? recode.date.slice(-5)
-                    : recode.date
-                      ? recode.date.slice(-5)
-                      : "N/A"}
-                </span>
-                <span className="text-[13px] text-left font-normal text-text-secondary">
-                  {recode.remark}
-                </span>
-                <span className="text-[13px] text-left font-normal text-text-secondary">
-                  Saved
-                </span>
-
-                {/* Action Buttons */}
-                <div className="flex justify-start gap-2">
-                  <>
-                    <button
-                      className="px-2 py-0 bg-primary-light border-primary-light h-[26px] w-[70px] text-white hover:bg-hover-light transition-all duration-200 font-normal rounded-[4px] text-[13px]"
-                      onClick={() => onSync && onSync(recode._id || recode.Id)}
-                    >
-                      Sync
-                    </button>
-                    <button
-                      onClick={() => handleDelete(recode._id)}
-                      className="px-2 py-0 bg-white border border-primary-red h-[26px] w-[70px] text-primary-red hover:bg-red-100 transition-all duration-200 font-normal rounded-[4px] text-[13px]"
-                    >
-                      Delete
-                    </button>
-                    <button
-                      onClick={() => onLoadDataset && onLoadDataset(recode)}
-                      className="px-2 py-0 bg-white border border-yellow-500 h-[26px] w-[120px] text-yellow-600 hover:bg-yellow-100 transition-all duration-200 font-normal rounded-[4px] text-[13px]"
-                    >
-                      Load Dataset
-                    </button>
-                  </>
-                </div>
-                {/* Separator */}
-                <div className="col-span-6 h-[0.5px] bg-border-default opacity-30"></div>
-              </React.Fragment>
-            ))
-          )}
+                    {/* Action Buttons */}
+                    <td className="px-6 py-4 align-middle">
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="px-3 py-1.5 bg-emerald-500 text-white hover:bg-emerald-600 active:bg-emerald-700 transition-colors duration-150 font-medium rounded-md text-xs"
+                          onClick={() => onSync && onSync(recode._id || recode.Id)}
+                          title="Sync record"
+                        >
+                          Sync
+                        </button>
+                        <button
+                          onClick={() => handleDelete(recode._id)}
+                          className="px-3 py-1.5 bg-red-500 text-white hover:bg-red-600 active:bg-red-700 transition-colors duration-150 font-medium rounded-md text-xs"
+                          title="Delete record"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={() => onLoadDataset && onLoadDataset(recode)}
+                          className="px-3 py-1.5 bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 transition-colors duration-150 font-medium rounded-md text-xs whitespace-nowrap"
+                          title="Load dataset"
+                        >
+                          Load Dataset
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

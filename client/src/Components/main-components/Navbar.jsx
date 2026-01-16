@@ -223,7 +223,7 @@ function Navbar() {
                       <div className="px-3 py-2 border-b border-gray-100 flex items-center space-x-3">
                         {/* Profile Image */}
                         <img
-                          src={default_profile} // fallback to default image
+                          src={user?.profile_img || default_profile}
                           alt="Profile"
                           className="w-10 h-10 rounded-full object-cover border border-gray-200"
                         />
