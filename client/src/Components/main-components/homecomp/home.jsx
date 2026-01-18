@@ -67,7 +67,7 @@ const Home = () => {
         const approvedDisasters = disastersArray
           .filter((disaster) => disaster.status === "Approved")
           .sort((a, b) => new Date(b.date) - new Date(a.date))
-          .slice(0, 3);
+          .slice(0, 4);
 
         console.log("Approved disasters:", approvedDisasters);
 
@@ -414,7 +414,7 @@ const Home = () => {
                 Our disaster management platform integrates the latest technologies to provide comprehensive emergency response solutions.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[1400px] mx-auto">
               <div className="rounded-lg flex flex-col justify-between items-center overflow-hidden shadow-sm  hover:shadow-md transition-all duration-300 z-30 border border-gray-100 group bg-white">
                 <div>
                   <div className="h-56 overflow-hidden w-full">
@@ -514,11 +514,11 @@ const Home = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
               </div>
             ) : latestDisasters.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-12">
                 {latestDisasters.map((disaster) => (
                   <div
                     key={disaster._id}
-                    className="relative overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-md hover:shadow-2xl transition-all duration-500 h-[480px] group cursor-pointer"
+                    className="group/bento shadow-input row-span-1 flex flex-col justify-between rounded-xl border border-neutral-200 bg-white transition duration-200 hover:shadow-xl dark:border-white/[0.2] dark:bg-black dark:shadow-none relative overflow-hidden min-h-[470px] mb-10"
                     style={{
                       backgroundImage: disaster.images && disaster.images.length > 0 ? `url(${disaster.images[0]})` : "none",
                       backgroundSize: "cover",
@@ -533,77 +533,57 @@ const Home = () => {
                       </div>
                     )}
 
-                    {/* Gradient Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 h-[55%] bg-gradient-to-t from-black/70 via-black/50 to-transparent rounded-2xl"></div>
-
-                    {/* Blur Overlay with Mask */}
+                    {/* Overlay for better text readability */}
+                    <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/60 via-black/40 to-black/5 rounded-lg"></div>
                     <div
-                      className="absolute bottom-0 left-0 right-0 h-[55%] backdrop-blur-lg rounded-2xl"
+                      className="absolute bottom-0 left-0 right-0 h-[60%] backdrop-blur-xl rounded-lg"
                       style={{
-                        maskImage: "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0) 100%)",
-                        WebkitMaskImage: "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0) 100%)",
+                        maskImage: "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 100%)",
+                        WebkitMaskImage: "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 100%)",
                       }}
                     ></div>
 
-                    {/* Content */}
-                    <div className="relative z-10 h-full flex flex-col">
-                      {/* Spacer */}
-                      <div className="flex-1"></div>
+                    <div className="relative z-10 transition duration-200 group-hover/bento:border-green-400 border-1 flex flex-col justify-between h-full">
+                      <div className="flex flex-col h-[60%] text-left items-end">
+                        <div className="flex h-[22px] w-24 mt-5 mx-5 rounded px-5 justify-center items-center text-center backdrop-blur-md bg-white/20 border border-white/30 shadow-lg">
+                          <div className="text-[13px] font-sans font-medium text-white">
+                            {disaster.severityLevel || disaster.severity || "Unknown"}
+                          </div>
+                        </div>
+                      </div>
 
-                      {/* Bottom Content Area */}
-                      <div className="px-6 pb-6 space-y-4">
-                        {/* Title and Severity Badge */}
-                        <div className="flex justify-between items-start gap-3">
-                          <h3 className="font-bold text-2xl text-white leading-tight">{disaster.disasterType}</h3>
-                          <div className="flex-shrink-0 h-7 px-4 rounded-full flex items-center justify-center backdrop-blur-xl bg-white/25 border border-white/40 shadow-lg">
-                            <span
-                              className={`text-xs font-bold ${
-                                disaster.severity === "High"
-                                  ? "text-red-400"
-                                  : disaster.severity === "Medium"
-                                    ? "text-yellow-400"
-                                    : disaster.severity === "Low"
-                                      ? "text-green-400"
-                                      : "text-gray-300"
-                              }`}
-                            >
-                              {disaster.severity}
-                            </span>
+                      <div className="flex flex-col gap-1 flex-grow h-[40%]">
+                        <div className="flex flex-col justify-center">
+                          <div className="flex justify-between my-2 mx-5">
+                            <div className="font-sans text-2xl font-bold text-white">{disaster.disasterType}</div>
+                          </div>
+
+                          <div className="font-sans mx-6 pt-2 h-full min-h-[50px] text-left text-[12px] font-normal text-white leading-relaxed">
+                            {disaster.description && disaster.description.length > 130 ? (
+                              <>{disaster.description.slice(0, 130)}...</>
+                            ) : (
+                              disaster.description
+                            )}
                           </div>
                         </div>
 
-                        {/* Location */}
-                        <div className="flex items-center text-white/95 gap-2">
-                          <MapPin className="w-4 h-4 flex-shrink-0" />
-                          <span className="text-sm font-medium truncate">{disaster.location}</span>
-                        </div>
-
-                        {/* Description */}
-                        <p className="text-sm text-white/85 line-clamp-2 leading-relaxed">{disaster.description}</p>
-
-                        {/* Divider */}
-                        <div className="border-t border-white/25 pt-3"></div>
-
-                        {/* Stats Row */}
-                        <div className="flex items-center justify-between text-xs text-white/90">
-                          <div className="flex items-center gap-1.5">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>{new Date(disaster.date).toLocaleDateString()}</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <Users className="w-3.5 h-3.5" />
-                            <span>{disaster.peopleAffected || 0} affected</span>
-                          </div>
-                        </div>
-
-                        {/* Reporter Info */}
-                        <div className="flex items-center gap-3 pt-2">
-                          <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
-                            <User className="w-4 h-4 text-white" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-white truncate">{disaster.reporterName || "Anonymous"}</p>
-                            <p className="text-xs text-white/70">Reporter</p>
+                        {/* Bottom Section */}
+                        <div className="flex flex-col">
+                          <div className="border-t border-white/30 my-2 mx-5" />
+                          <div className="flex flex-row rounded-md justify-between mx-5 mt-2">
+                            <div className="flex gap-3 items-center">
+                              <div className="w-[30px] h-[30px] rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+                                <User className="w-4 h-4 text-white" />
+                              </div>
+                              <div className="flex flex-col text-left text-[12px] font-normal text-white/80">
+                                <span className="font-semibold text-[13px] text-white">{disaster.user || disaster.reporterName || "Unknown"}</span>
+                                <span>{disaster.email || "Anonymous User"}</span>
+                              </div>
+                            </div>
+                            <div className="flex flex-col text-right text-[12px] font-normal text-white/80">
+                              <div className="font-semibold text-white">Date</div>
+                              <span>{disaster.date ? new Date(disaster.date).toISOString().split("T")[0] : ""}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
