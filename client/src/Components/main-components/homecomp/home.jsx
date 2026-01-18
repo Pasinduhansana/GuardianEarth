@@ -499,7 +499,7 @@ const Home = () => {
 
         {/* Latest Disasters Section */}
         <section className="py-20 relative overflow-hidden bg-gradient-to-b from-gray-50 to-white">
-          <div className="max-w-[1600px] mx-auto px-6 lg:px-12 relative z-10">
+          <div className="max-w-[1800px] mx-auto px-6 lg:px-12 relative z-10">
             {/* Section Header */}
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">Latest Disasters</h2>

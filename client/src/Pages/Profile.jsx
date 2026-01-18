@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 import { Camera, User, Mail, MapPin, Calendar, Lock, Eye, EyeOff, Shield, Settings, Bell, Bookmark, HelpCircle } from "lucide-react";
 import default_profile from "../assets/profile.png";
+import { ProfileSkeleton } from "../Components/ui/LoadingSkeleton";
 
 const Profile = () => {
   const [user, setUser] = useState({
@@ -14,6 +15,7 @@ const Profile = () => {
     profileImage: null,
   });
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const [previewImage, setPreviewImage] = useState(null);
   const [passwords, setPasswords] = useState({
     currentPassword: "",
@@ -38,6 +40,7 @@ const Profile = () => {
   }, []);
 
   const fetchUserData = async () => {
+    setPageLoading(true);
     try {
       const response = await fetch("http://localhost:5000/api/user/profile", {
         headers: {
@@ -50,6 +53,8 @@ const Profile = () => {
     } catch (error) {
       console.error("Error fetching user data:", error);
       toast.error("Failed to load user data");
+    } finally {
+      setPageLoading(false);
     }
   };
 
@@ -198,11 +203,15 @@ const Profile = () => {
     { id: "saved", label: "Saved", icon: Bookmark },
   ];
 
+  if (pageLoading) {
+    return <ProfileSkeleton />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Clean Profile Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-6">
+        <div className="max-w-[1800px] mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 justify-center">
             {/* Profile Image */}
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative">
@@ -254,7 +263,7 @@ const Profile = () => {
       </div>
 
       {/* Single Page Content - All Sections Visible */}
-      <div className="container mx-auto px-4 py-8 ">
+      <div className="max-w-[1800px] mx-auto px-4 py-8 ">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Personal Info & Password */}
           <div className="lg:col-span-2 space-y-6">

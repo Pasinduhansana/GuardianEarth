@@ -1,5 +1,6 @@
 import { cn } from "../../lib/utils";
 import profile_pic from "../../assets/Profile_Pic.jpg";
+import toast from "react-hot-toast";
 
 const getSeverityColor = (level) => {
   switch (level) {
@@ -58,11 +59,29 @@ export const BentoGridItem = ({ className, title, description, header, icon, dat
               <div className="font-sans text-2xl font-bold text-white">{title}</div>
             </div>
 
-            <div className="font-sans mx-6 pt-2 h-full min-h-[50px] text-left text-[12px] font-normal text-white">
-              {description.length > 110 ? (
+            <div className="font-sans mx-6 pt-2 h-full min-h-[50px] text-left text-[12px] font-normal text-white leading-relaxed">
+              {description.length > 130 ? (
                 <>
-                  {description.slice(0, 110)}...
-                  <button className="ml-2 py-1 text-xs text-emerald-300 font-semibold  transition" onClick={() => alert(description)}>
+                  {description.slice(0, 130)}...
+                  <button
+                    className="ml-2 py-1 text-xs text-emerald-300 font-semibold  transition"
+                    onClick={() => {
+                      toast(
+                        <div className="flex flex-col gap-2 max-w-md">
+                          <div className="font-bold text-sm text-gray-900">Full Description</div>
+                          <div className="text-sm text-gray-700 leading-relaxed">{description}</div>
+                        </div>,
+                        {
+                          duration: 6000,
+                          style: {
+                            maxWidth: "500px",
+                            padding: "16px",
+                          },
+                          icon: "📖",
+                        }
+                      );
+                    }}
+                  >
                     Read More
                   </button>
                 </>

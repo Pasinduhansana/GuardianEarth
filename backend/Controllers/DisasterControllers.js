@@ -1,10 +1,30 @@
 import Disaster from "../Models/disasterModel.js";
+import User from "../Models/user.js";
 
 export const getAllDisasters = async (req, res) => {
   let disasters;
 
   try {
     disasters = await Disaster.find();
+
+    // Fetch current user data for each disaster
+    const disastersWithCurrentUserData = await Promise.all(
+      disasters.map(async (disaster) => {
+        const disasterObj = disaster.toObject();
+
+        // Find the user by email to get current profile picture
+        const currentUser = await User.findOne({ email: disaster.email });
+
+        if (currentUser) {
+          disasterObj.userImage = currentUser.profile_img;
+          disasterObj.user = currentUser.name;
+        }
+
+        return disasterObj;
+      })
+    );
+
+    disasters = disastersWithCurrentUserData;
   } catch (err) {
     console.log(err);
   }
@@ -21,19 +41,7 @@ export const getAllDisasters = async (req, res) => {
 //data insert
 
 export const insertDisaster = async (req, res, next) => {
-  const {
-    disasterType,
-    severityLevel,
-    description,
-    numberOfPeopleAffected,
-    images,
-    date,
-    Location,
-    contact,
-    user,
-    email,
-    userImage,
-  } = req.body;
+  const { disasterType, severityLevel, description, numberOfPeopleAffected, images, date, Location, contact, user, email, userImage } = req.body;
 
   let createdDisaster;
 
@@ -87,19 +95,7 @@ export const getDisasterById = async (req, res, next) => {
 //Update disaster
 
 export const updateDisaster = async (req, res, next) => {
-  const {
-    disasterType,
-    severityLevel,
-    description,
-    numberOfPeopleAffected,
-    images,
-    date,
-    Location,
-    contact,
-    user,
-    email,
-    userImage,
-  } = req.body;
+  const { disasterType, severityLevel, description, numberOfPeopleAffected, images, date, Location, contact, user, email, userImage } = req.body;
 
   const id = req.params.id;
 
@@ -156,13 +152,8 @@ export const deleteDisaster = async (req, res, next) => {
 export const approveDisaster = async (req, res) => {
   const { id } = req.params;
   try {
-    const disaster = await Disaster.findByIdAndUpdate(
-      id,
-      { status: "Approved" },
-      { new: true }
-    );
-    if (!disaster)
-      return res.status(404).json({ message: "Disaster not found" });
+    const disaster = await Disaster.findByIdAndUpdate(id, { status: "Approved" }, { new: true });
+    if (!disaster) return res.status(404).json({ message: "Disaster not found" });
     res.json({ message: "Disaster approved successfully", disaster });
   } catch (error) {
     res.status(500).json({ message: "Failed to approve disaster" });
@@ -173,13 +164,8 @@ export const approveDisaster = async (req, res) => {
 export const rejectDisaster = async (req, res) => {
   const { id } = req.params;
   try {
-    const disaster = await Disaster.findByIdAndUpdate(
-      id,
-      { status: "Rejected" },
-      { new: true }
-    );
-    if (!disaster)
-      return res.status(404).json({ message: "Disaster not found" });
+    const disaster = await Disaster.findByIdAndUpdate(id, { status: "Rejected" }, { new: true });
+    if (!disaster) return res.status(404).json({ message: "Disaster not found" });
     res.json({ message: "Disaster rejected successfully", disaster });
   } catch (error) {
     res.status(500).json({ message: "Failed to reject disaster" });

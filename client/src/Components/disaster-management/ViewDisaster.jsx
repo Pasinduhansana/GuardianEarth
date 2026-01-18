@@ -13,6 +13,7 @@ import Modal from "../main-components/Model";
 import { FileText, MapPin, Users, Calendar, Phone, Edit, Trash2, LayoutGrid, List, Plus } from "lucide-react";
 import { BackgroundBeams } from "../../Components/ui/background-beams";
 import Disaster_form from "../disaster-management/DisasterForm";
+import { CardSkeleton } from "../ui/LoadingSkeleton";
 
 const formatDate = (dateString) => {
   const dateObj = new Date(dateString);
@@ -399,7 +400,7 @@ export default function ViewDisasters() {
   return (
     <>
       <div>
-        <div className="min-h-screen  bg-gray-50 px-4 sm:px-6 lg:px-6 pt-4">
+        <div className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-6 pt-4">
           {/* Grid Background */}
           <div className="absolute inset-0 z-0 opacity-10 ">
             <div
@@ -414,88 +415,96 @@ export default function ViewDisasters() {
               }}
             ></div>
           </div>
-          <div className="flex items-center justify-between mb-8 ">
-            <div className="flex flex-col justify-start text-left ml-2">
-              <h1 className="text-2xl mt-2 font-semibold text-gray-700">Disaster Reports</h1>
-              <p className="text-sm text-gray-400 mt-1">Stay informed with the latest disaster updates and response data.</p>
-            </div>
-
-            <div className="flex flex-row  gap-2">
-              <div className="inline-flex items-center rounded-lg z-20 border border-gray-200 bg-white p-1">
-                <button
-                  onClick={() => setViewMode("list")}
-                  type="button"
-                  className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === "list" ? "bg-emerald-100 text-emerald-800" : "text-gray-600 hover:text-gray-800"
-                  }`}
-                >
-                  <List className="w-4 h-4 mr-1" />
-                  List
-                </button>
-                <button
-                  onClick={() => setViewMode("grid")}
-                  type="button"
-                  className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === "grid" ? "bg-emerald-100 text-emerald-800" : "text-gray-600 hover:text-gray-800"
-                  }`}
-                >
-                  <LayoutGrid className="w-4 h-4 mr-1 " />
-                  Grid
-                </button>
+          <div className="max-w-[1800px] mx-auto">
+            <div className="flex items-center justify-between mb-8 ">
+              <div className="flex flex-col justify-start text-left ml-2">
+                <h1 className="text-2xl mt-2 font-semibold text-gray-700">Disaster Reports</h1>
+                <p className="text-sm text-gray-400 mt-1">Stay informed with the latest disaster updates and response data.</p>
               </div>
 
-              <button
-                onClick={() => {
-                  setIsAddModalOpen(true);
-                  setIsModalOpen(true);
-                }}
-                className=" hover:border-green-300 active:bg-green-100 z-10 w-[145px] h-[38px] mt-[1px] border border-gray-200 bg-white p-1 justify-center text-[#626262] hover:text-green-600 px-2 py-3 rounded-md transition-all duration-300 text-[14px] font-medium !rounded-button whitespace-nowrap cursor-pointer shadow-sm flex items-center"
-              >
-                <Plus className="mr-2" /> Report Desaster
-              </button>
+              <div className="flex flex-row  gap-2">
+                <div className="inline-flex items-center rounded-lg z-20 border border-gray-200 bg-white p-1">
+                  <button
+                    onClick={() => setViewMode("list")}
+                    type="button"
+                    className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      viewMode === "list" ? "bg-emerald-100 text-emerald-800" : "text-gray-600 hover:text-gray-800"
+                    }`}
+                  >
+                    <List className="w-4 h-4 mr-1" />
+                    List
+                  </button>
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    type="button"
+                    className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      viewMode === "grid" ? "bg-emerald-100 text-emerald-800" : "text-gray-600 hover:text-gray-800"
+                    }`}
+                  >
+                    <LayoutGrid className="w-4 h-4 mr-1 " />
+                    Grid
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setIsAddModalOpen(true);
+                    setIsModalOpen(true);
+                  }}
+                  className=" hover:border-green-300 active:bg-green-100 z-10 w-[145px] h-[38px] mt-[1px] border border-gray-200 bg-white p-1 justify-center text-[#626262] hover:text-green-600 px-2 py-3 rounded-md transition-all duration-300 text-[14px] font-medium !rounded-button whitespace-nowrap cursor-pointer shadow-sm flex items-center"
+                >
+                  <Plus className="mr-2" /> Report Desaster
+                </button>
+              </div>
             </div>
-          </div>
-          <div
-            className={`grid gap-6 ${
-              viewMode === "grid1"
-                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 z-20"
-                : viewMode === "list"
-                  ? "grid-cols-1 lg:grid-cols-2 z-20"
-                  : "grid-cols-1 z-20"
-            }`}
-          >
-            {loading ? (
-              // Show 6 skeletons for grid, or 1 for list
-              viewMode === "grid" ? (
-                Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} viewMode={viewMode} />)
-              ) : (
-                <Skeleton viewMode={viewMode} />
-              )
-            ) : viewMode === "list" ? (
-              disasterData && disasterData.length > 0 ? (
-                disasterData.map((disaster) => <ListCard key={disaster._id} data={disaster} navigate={navigate} />)
+            <div
+              className={`grid gap-6 ${
+                viewMode === "grid1"
+                  ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 z-20"
+                  : viewMode === "list"
+                    ? "grid-cols-1 lg:grid-cols-2 z-20"
+                    : "grid-cols-1 z-20"
+              }`}
+            >
+              {loading ? (
+                // Show 6 skeletons for grid, or 1 for list
+                viewMode === "grid" ? (
+                  Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} viewMode={viewMode} />)
+                ) : (
+                  <Skeleton viewMode={viewMode} />
+                )
+              ) : viewMode === "list" ? (
+                disasterData && disasterData.length > 0 ? (
+                  disasterData.map((disaster) => <ListCard key={disaster._id} data={disaster} navigate={navigate} />)
+                ) : (
+                  <p className="text-gray-500">No disaster reports available.</p>
+                )
+              ) : loading ? (
+                <div className="grid grid-cols-1 gap-5 md:auto md:grid-cols-3">
+                  {[...Array(6)].map((_, i) => (
+                    <CardSkeleton key={i} />
+                  ))}
+                </div>
+              ) : disasterData && disasterData.length > 0 ? (
+                <BentoGrid className="w-full z-20">
+                  {disasterData.map((disaster, i) => (
+                    <BentoGridItem
+                      key={disaster._id}
+                      title={disaster.disasterType}
+                      description={disaster.description}
+                      header={disaster.severityLevel}
+                      icon={disaster.images}
+                      data={disaster}
+                      type="user"
+                      navigation={navigate}
+                      className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+                    />
+                  ))}
+                </BentoGrid>
               ) : (
                 <p className="text-gray-500">No disaster reports available.</p>
-              )
-            ) : disasterData && disasterData.length > 0 ? (
-              <BentoGrid className="w-full z-20">
-                {disasterData.map((disaster, i) => (
-                  <BentoGridItem
-                    key={disaster._id}
-                    title={disaster.disasterType}
-                    description={disaster.description}
-                    header={disaster.severityLevel}
-                    icon={disaster.images}
-                    data={disaster}
-                    type="user"
-                    navigation={navigate}
-                    className={i === 3 || i === 6 ? "md:col-span-2" : ""}
-                  />
-                ))}
-              </BentoGrid>
-            ) : (
-              <p className="text-gray-500">No disaster reports available.</p>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
@@ -507,6 +516,7 @@ export default function ViewDisasters() {
             setIsModalOpen(false);
           }}
           title="Create New Disaster"
+          maxWidth="sm:max-w-5xl"
         >
           <Disaster_form
             onSubmit={(formData) => {

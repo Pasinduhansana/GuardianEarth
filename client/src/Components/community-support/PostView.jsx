@@ -132,7 +132,7 @@ const PostView = () => {
       const response = await fetch("http://localhost:5000/api/posts");
       const data = await response.json();
       const approvedPosts = Array.isArray(data)
-        ? data.filter((post) => post.status === "approved").sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        ? data.filter((post) => post.status === "approved").sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
         : [];
       setPosts(approvedPosts);
       console.log(approvedPosts);
@@ -738,7 +738,7 @@ const PostView = () => {
       {/* Header */}
 
       <header className="sticky top-0 z-50 ">
-        <div className=" mx-5">
+        <div className="max-w-[1800px] mx-auto px-5">
           {/* Main Header Content */}
           <div className="px-4 py-2 flex justify-between items-center">
             <div className="flex items-center space-x-2">
@@ -781,7 +781,7 @@ const PostView = () => {
         </div>
       </header>
 
-      <main className=" mx-auto px-4 grid grid-cols-1 md:grid-cols-[minmax(250px,300px)_minmax(0,1fr)_minmax(250px,300px)] lg:grid-cols-[280px_minmax(0,1fr)_280px] xl:grid-cols-[320px_minmax(0,1fr)_320px] gap-4 overflow-hidden max-h-[calc(100vh-5rem)] scrollbar-hide ">
+      <main className="max-w-[1800px] mx-auto px-4 grid grid-cols-1 md:grid-cols-[minmax(250px,300px)_minmax(0,1fr)_minmax(250px,300px)] lg:grid-cols-[280px_minmax(0,1fr)_280px] xl:grid-cols-[320px_minmax(0,1fr)_320px] gap-4 overflow-hidden max-h-[calc(100vh-5rem)] scrollbar-hide ">
         {/* Left Sidebar - For Tablet & Desktop */}
         <div className="hidden md:block md:col-span-1">
           <div className="sticky top-0 h-[calc(100vh-6rem)] flex flex-col pr-2">

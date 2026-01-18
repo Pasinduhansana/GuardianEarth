@@ -293,7 +293,7 @@ function Payment() {
       <div className="absolute inset-0 -z-10">
         <AuroraBackground />
       </div>
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-[1600px] relative z-10">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-[1800px] relative z-10">
         <div className="flex gap-6">
           {/* Left Sidebar - Disaster List */}
           <div className="min-w-[380px] w-[380px]">

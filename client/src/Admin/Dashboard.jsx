@@ -11,6 +11,7 @@ import Dashboard_grid from "../Components/admin-dashboard/Dashboard-Datagrid.jsx
 import toast from "react-hot-toast";
 import Modal from "../Components/main-components/Model";
 import { Bell, PiggyBank, HandCoins, Users, BarChart3, FileDown, Plus } from "lucide-react";
+import { StatsCardSkeleton, ChartSkeleton, TableSkeleton } from "../Components/ui/LoadingSkeleton";
 
 const Dashboard = () => {
   const [payment_data, setPayment_data] = useState([]);
@@ -393,7 +394,7 @@ const Dashboard = () => {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
@@ -425,66 +426,76 @@ const Dashboard = () => {
             </div>
             {/* Stats Cards - Compact Modern Design */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
-              <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-100 transition">
-                    <HandCoins className="w-5 h-5 text-emerald-600" />
+              {loading ? (
+                <>
+                  {[...Array(5)].map((_, i) => (
+                    <StatsCardSkeleton key={i} />
+                  ))}
+                </>
+              ) : (
+                <>
+                  <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-100 transition">
+                        <HandCoins className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-gray-500 mb-0.5">Total Donations</p>
+                        <p className="text-xl font-bold text-gray-900 truncate">${getTotalDonations().toFixed(2)}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-500 mb-0.5">Total Donations</p>
-                    <p className="text-xl font-bold text-gray-900 truncate">${getTotalDonations().toFixed(2)}</p>
+                  <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition">
+                        <PiggyBank className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-gray-500 mb-0.5">Savings</p>
+                        <p className="text-xl font-bold text-gray-900 truncate">${getTotalDonations() - (getTotalDonations() * 0.87).toFixed(2)}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition">
-                    <PiggyBank className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-500 mb-0.5">Savings</p>
-                    <p className="text-xl font-bold text-gray-900 truncate">${getTotalDonations() - (getTotalDonations() * 0.87).toFixed(2)}</p>
-                  </div>
-                </div>
-              </div>
 
-              <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 transition">
-                    <BarChart3 className="w-5 h-5 text-purple-600" />
+                  <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 transition">
+                        <BarChart3 className="w-5 h-5 text-purple-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-gray-500 mb-0.5">Distribution</p>
+                        <p className="text-xl font-bold text-gray-900">
+                          {(users.filter((user) => user.status === "active").length / users.length || 0).toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-500 mb-0.5">Distribution</p>
-                    <p className="text-xl font-bold text-gray-900">
-                      {(users.filter((user) => user.status === "active").length / users.length || 0).toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-              </div>
 
-              <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-yellow-100 transition">
-                    <PiggyBank className="w-5 h-5 text-yellow-600" />
+                  <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-yellow-100 transition">
+                        <PiggyBank className="w-5 h-5 text-yellow-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-gray-500 mb-0.5">Balance Amount</p>
+                        <p className="text-xl font-bold text-gray-900 truncate">${(getTotalDonations() * 0.87).toFixed(2)}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-500 mb-0.5">Balance Amount</p>
-                    <p className="text-xl font-bold text-gray-900 truncate">${(getTotalDonations() * 0.87).toFixed(2)}</p>
-                  </div>
-                </div>
-              </div>
 
-              <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-cyan-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-cyan-100 transition">
-                    <Users className="w-5 h-5 text-cyan-600" />
+                  <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-cyan-50 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-cyan-100 transition">
+                        <Users className="w-5 h-5 text-cyan-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-gray-500 mb-0.5">User Traffic</p>
+                        <p className="text-xl font-bold text-gray-900">{getActiveUsersCount()}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-500 mb-0.5">User Traffic</p>
-                    <p className="text-xl font-bold text-gray-900">{getActiveUsersCount()}</p>
-                  </div>
-                </div>
-              </div>
+                </>
+              )}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

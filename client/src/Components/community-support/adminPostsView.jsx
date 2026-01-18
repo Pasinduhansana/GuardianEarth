@@ -3,7 +3,7 @@ import { FaEdit, FaTrash, FaPlus, FaImage, FaMapMarkerAlt, FaCalendarAlt, FaTags
 import { Image, Plus, LayoutGrid, List } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { format } from "date-fns";
-import { Toaster, toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 import Modal from "../main-components/Model";
 import { useModal } from "../main-components/ModalContext";
 
@@ -141,8 +141,11 @@ const adminPostView = () => {
     if (deleteToastRef.current) {
       return;
     }
+
+    // Dismiss all existing toasts before showing confirmation
     toast.dismiss();
-    toast(
+
+    deleteToastRef.current = toast(
       (t) => (
         <div className="flex items-center gap-4">
           <p>Are you sure you want to delete this post?</p>
@@ -150,6 +153,10 @@ const adminPostView = () => {
             <button
               onClick={async () => {
                 try {
+                  // Dismiss confirmation toast immediately
+                  toast.dismiss(t.id);
+                  deleteToastRef.current = null;
+
                   // Send DELETE request to backend
                   const response = await fetch(`http://localhost:5000/api/posts/${postId}`, {
                     method: "DELETE",
@@ -163,10 +170,10 @@ const adminPostView = () => {
 
                   // Remove from local state
                   setPosts((prev) => prev.filter((post) => post._id !== postId));
-                  toast.dismiss(t.id);
-                  toast.success("Post deleted successfully");
+
+                  // Show success message only once
+                  toast.success("Post deleted successfully", { duration: 3000 });
                 } catch (error) {
-                  toast.dismiss(t.id);
                   toast.error("Error deleting post: " + error.message);
                 }
               }}
@@ -175,7 +182,10 @@ const adminPostView = () => {
               Delete
             </button>
             <button
-              onClick={() => toast.dismiss(t.id)}
+              onClick={() => {
+                toast.dismiss(t.id);
+                deleteToastRef.current = null;
+              }}
               className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
             >
               Cancel
@@ -184,7 +194,7 @@ const adminPostView = () => {
         </div>
       ),
       {
-        duration: 5000,
+        duration: Infinity,
         position: "top-center",
       }
     );
@@ -517,7 +527,6 @@ const adminPostView = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 ">
-      <Toaster />
       <header className="bg-gray-50 shadow-sm sticky top-0 z-40">
         <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center text-left">
@@ -752,7 +761,7 @@ const adminPostView = () => {
                   <img
                     src={imageModalUrl}
                     alt="Preview"
-                    className="w-full h-full max-h-[650px] object-contain rounded-2xl shadow-2xl border border-gray-200"
+                    className="w-full h-auto max-w-full object-cover rounded-2xl shadow-2xl border border-gray-200"
                   />
                 </div>
               </div>

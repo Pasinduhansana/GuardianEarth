@@ -3,9 +3,10 @@ import { FaEdit, FaTrash, FaSearch, FaCalendarAlt } from "react-icons/fa";
 import { BentoGrid, BentoGridItem } from "../ui/bento-grid";
 import { Plus, LayoutGrid, List, Map } from "lucide-react";
 import { format } from "date-fns";
-import { Toaster, toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 import Modal from "../main-components/Model";
 import DisasterForm from "./DisasterForm";
+import { CardSkeleton } from "../ui/LoadingSkeleton";
 
 const AdminDisasterView = () => {
   const [imageModalUrl, setImageModalUrl] = useState(null);
@@ -363,7 +364,6 @@ const AdminDisasterView = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 ">
-      <Toaster />
       <header className="bg-gray-50 shadow-sm sticky top-0 z-40">
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center text-left">
@@ -422,7 +422,7 @@ const AdminDisasterView = () => {
         </div>
       </header>
 
-      <main className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-6">
           {/* Left Sidebar - Statistics */}
           <div className="w-72 flex-shrink-0 space-y-4">
@@ -486,7 +486,11 @@ const AdminDisasterView = () => {
           <div className="flex-1 min-w-0">
             {error && <div className="mb-6 p-3 text-sm bg-red-50 border border-red-200 rounded-md text-red-600">{error}</div>}
             {loading ? (
-              <div className="text-center text-gray-500 text-[15px] py-10">Loading disasters...</div>
+              <div className="mx-auto grid grid-cols-1 gap-5 md:auto md:grid-cols-3">
+                {[...Array(6)].map((_, i) => (
+                  <CardSkeleton key={i} />
+                ))}
+              </div>
             ) : filteredDisasters.length === 0 ? (
               <div className="text-center text-gray-400 text-[16px] py-10">No records found.</div>
             ) : viewMode === "grid" ? (
@@ -521,6 +525,7 @@ const AdminDisasterView = () => {
           setEditingDisaster(null);
         }}
         title="Create New Disaster"
+        maxWidth="sm:max-w-5xl"
       >
         <DisasterForm onDisasterSuccess={fetchDisasters} onDisasterClosed={() => setIsAddModalOpen(false)} />
       </Modal>
@@ -532,6 +537,7 @@ const AdminDisasterView = () => {
           setEditingDisaster(null);
         }}
         title="Edit Disaster"
+        maxWidth="sm:max-w-5xl"
       >
         <DisasterForm
           initialData={editingDisaster}

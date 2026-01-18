@@ -165,7 +165,7 @@ const AddDisaster = ({ initialData, isEdit, onDisasterClosed, onDisasterSuccess 
     try {
       const payload = {
         ...inputs,
-        user: user.name, // or user.username, depending on your user object
+        user: user.name,
         email: user.email,
         userImage: user.profile_img,
       };
@@ -195,7 +195,7 @@ const AddDisaster = ({ initialData, isEdit, onDisasterClosed, onDisasterSuccess 
     try {
       const payload = {
         ...inputs,
-        user: user.name, // or user.username, depending on your user object
+        user: user.name,
         email: user.email,
         userImage: user.profile_img,
       };
