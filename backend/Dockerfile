@@ -13,8 +13,8 @@ RUN npm install
 # Copy all source files
 COPY . .
 
-# Expose your port (use 4000 by default from your code)
+# Expose your port (Railway will assign this via $PORT)
 EXPOSE 4000
 
 # Run the backend server
-CMD ["node", "server.js"]
+CMD ["node", "Server.js"]
