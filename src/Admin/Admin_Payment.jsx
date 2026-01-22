@@ -11,7 +11,8 @@ import { RiProgress2Line } from "react-icons/ri";
 import VerticalBarChart from "../Components/disaster-funding/Verticle_BarChart.jsx";
 import invoice_jpg from "../assets/Icons/invoice.png";
 import { FaFilePdf } from "react-icons/fa6";
-import html2pdf from "html2pdf.js";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import toast from "react-hot-toast";
 import { API_BASE_URL } from "../config/api";
 
@@ -172,25 +173,27 @@ const Admin_Payment = () => {
     // Create a temporary element to hold the HTML
     const element = document.createElement("div");
     element.innerHTML = invoiceHTML;
+    document.body.appendChild(element);
+    element.style.position = "absolute";
+    element.style.left = "-9999px";
 
-    // Configure html2pdf options
-    const options = {
-      margin: 10,
-      filename: `invoice_${selectedPayment.transactionId?.slice(-6) || "invoice"}_${new Date().toISOString().split("T")[0]}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    };
+    // Use html2canvas and jsPDF
+    html2canvas(element, { scale: 2, useCORS: true })
+      .then((canvas) => {
+        const imgData = canvas.toDataURL("image/jpeg", 0.98);
+        const pdf = new jsPDF("p", "mm", "a4");
+        const imgWidth = 190;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        const margin = 10;
 
-    // Generate and download PDF
-    html2pdf()
-      .set(options)
-      .from(element)
-      .save()
-      .then(() => {
+        pdf.addImage(imgData, "JPEG", margin, margin, imgWidth, imgHeight);
+        pdf.save(`invoice_${selectedPayment.transactionId?.slice(-6) || "invoice"}_${new Date().toISOString().split("T")[0]}.pdf`);
+
+        document.body.removeChild(element);
         toast.success("PDF downloaded successfully!");
       })
       .catch((error) => {
+        document.body.removeChild(element);
         console.error("PDF generation error:", error);
         toast.error("Failed to generate PDF");
       });

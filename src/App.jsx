@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { ModalProvider } from "./Components/main-components/ModalContext";
@@ -7,7 +6,6 @@ import "./App.css";
 import Payment from "./Pages/Payment";
 import Admin_Payment from "./Admin/Admin_Payment";
 import Dashboard from "./Admin/Dashboard";
-import { AnimatePresence } from "framer-motion";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import ForgotPassword from "./Pages/ForgotPassword";
@@ -15,9 +13,9 @@ import ResetPassword from "./Pages/ResetPassword";
 import Profile from "./Pages/Profile";
 
 //Main Component Imports
-import Home from "./components/main-components/homecomp/home";
-import About from "./components/main-components/About";
-import FloodPredictor from "./components/main-components/prediction-model/FloodPredictor";
+import Home from "./Components/main-components/homecomp/home";
+import About from "./Components/main-components/About";
+import FloodPredictor from "./Components/main-components/prediction-model/FloodPredictor";
 import { UserManagement } from "./Pages/UserManagement";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./Components/main-components/ProtectedRoute";
@@ -28,9 +26,9 @@ import ViewDisaster from "./Components/disaster-management/ViewDisaster";
 import AdminDisasterView from "./Components/disaster-management/adminDisasterView";
 
 //Comunity-support imports
-import PostView from "./components/community-support/PostView";
+import PostView from "./Components/community-support/PostView";
 
-import ViewPosts from "./components/community-support/adminPostsView";
+import ViewPosts from "./Components/community-support/adminPostsView";
 import Navbar from "./Components/main-components/Navbar";
 
 const hideNavbarRoutes = ["/login", "/register", "/forgot-password", "/reset-password"];
