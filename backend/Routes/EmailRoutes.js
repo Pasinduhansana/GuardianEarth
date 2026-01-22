@@ -1,5 +1,5 @@
 import express from "express";
-import sendEmail from "../utils/sendEmail.js";
+import sendEmail from "../Utils/sendEmail.js";
 import fs from "fs";
 import axios from "axios";
 
