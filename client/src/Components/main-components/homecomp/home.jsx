@@ -19,6 +19,7 @@ import Footer from "./footer";
 import FloodPredictor from "../prediction-model/FloodPredictor";
 import { use } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../../../config/api";
 
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -56,7 +57,7 @@ const Home = () => {
     const fetchLatestDisasters = async () => {
       try {
         setLoadingDisasters(true);
-        const response = await axios.get("http://localhost:5000/api/disaster");
+        const response = await axios.get(`${API_BASE_URL}/api/disaster`);
         console.log("API response:", response.data);
 
         const disastersArray = Array.isArray(response.data) ? response.data : response.data.disasters || [];

@@ -3,6 +3,7 @@ import { FaImage } from "react-icons/fa";
 import { useDropzone } from "react-dropzone";
 import toast from "react-hot-toast";
 import { MapPin, Loader2 } from "lucide-react";
+import { API_BASE_URL } from "../../config/api";
 
 const PostForm = ({ initialData, isEdit, onPostCreated, onUpdateSuccess }) => {
   const [loadingLocation, setLoadingLocation] = useState(false);
@@ -20,7 +21,7 @@ const PostForm = ({ initialData, isEdit, onPostCreated, onUpdateSuccess }) => {
 
   const createPost = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/posts", {
+      const response = await fetch(`${API_BASE_URL}/api/posts`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,7 +44,7 @@ const PostForm = ({ initialData, isEdit, onPostCreated, onUpdateSuccess }) => {
 
   const updatePost = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/posts/${formData._id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/posts/${formData._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +91,7 @@ const PostForm = ({ initialData, isEdit, onPostCreated, onUpdateSuccess }) => {
 
         try {
           // Send image to your backend to upload to Cloudinary
-          const response = await fetch("http://localhost:5000/api/upload", {
+          const response = await fetch(`${API_BASE_URL}/api/upload`, {
             method: "POST",
             body: formData,
           });

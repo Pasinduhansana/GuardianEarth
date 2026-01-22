@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE_URL } from "../config/api";
 import { toast } from "react-hot-toast";
 import { motion } from "framer-motion";
 import { Camera, User, Mail, MapPin, Calendar, Lock, Eye, EyeOff, Shield, Settings, Bell, Bookmark, HelpCircle } from "lucide-react";
@@ -42,7 +43,7 @@ const Profile = () => {
   const fetchUserData = async () => {
     setPageLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/user/profile", {
+      const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -67,7 +68,7 @@ const Profile = () => {
         const formData = new FormData();
         formData.append("image", file);
 
-        const response = await fetch("http://localhost:5000/api/upload", {
+        const response = await fetch(`${API_BASE_URL}/api/upload`, {
           method: "POST",
           body: formData,
         });
@@ -93,7 +94,7 @@ const Profile = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/users/${user._id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/users/${user._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -166,7 +167,7 @@ const Profile = () => {
     if (hasError) return;
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/change-password", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/change-password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

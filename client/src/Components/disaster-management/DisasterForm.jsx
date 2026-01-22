@@ -7,6 +7,7 @@ import { MapPin, AlertCircle, Loader2 } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { FaImage } from "react-icons/fa";
 import { AuthContext } from "../../context/AuthContext";
+import { API_BASE_URL } from "../../config/api";
 
 const formatDate = (dateString) => {
   const dateObj = new Date(dateString);
@@ -73,7 +74,7 @@ const AddDisaster = ({ initialData, isEdit, onDisasterClosed, onDisasterSuccess 
           console.error("Geolocation Error:", error);
           toast.error("Location access denied. Enable GPS and try again.");
           setLoadingLocation(false); // Stop loading
-        }
+        },
       );
     } else {
       toast.error("Geolocation is not supported by this browser.");
@@ -170,7 +171,7 @@ const AddDisaster = ({ initialData, isEdit, onDisasterClosed, onDisasterSuccess 
         userImage: user.profile_img,
       };
 
-      const response = await fetch("http://localhost:5000/api/disaster", {
+      const response = await fetch(`${API_BASE_URL}/api/disaster`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -199,7 +200,7 @@ const AddDisaster = ({ initialData, isEdit, onDisasterClosed, onDisasterSuccess 
         email: user.email,
         userImage: user.profile_img,
       };
-      const response = await fetch(`http://localhost:5000/api/disaster/${inputs._id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/disaster/${inputs._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -235,7 +236,7 @@ const AddDisaster = ({ initialData, isEdit, onDisasterClosed, onDisasterSuccess 
 
         try {
           // Send image to your backend to upload to Cloudinary
-          const response = await fetch("http://localhost:5000/api/upload", {
+          const response = await fetch(`${API_BASE_URL}/api/upload`, {
             method: "POST",
             body: formData,
           });

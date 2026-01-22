@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 
 const AuthPage = ({ mode = "login" }) => {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -15,10 +16,7 @@ const AuthPage = ({ mode = "login" }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const endpoint =
-        mode === "register"
-          ? "http://localhost:5000/api/auth/register"
-          : "http://localhost:5000/api/auth/login";
+      const endpoint = mode === "register" ? `${API_BASE_URL}/api/auth/register` : `${API_BASE_URL}/api/auth/login`;
       const res = await axios.post(endpoint, form);
       localStorage.setItem("token", res.data.token);
       navigate("/dashboard");
@@ -32,49 +30,17 @@ const AuthPage = ({ mode = "login" }) => {
       <div className="w-full max-w-sm rounded-2xl shadow-md">
         <div className="p-6">
           <h2 className="text-xl font-bold text-green-700 mb-4 text-center">
-            {mode === "register"
-              ? "Create Account"
-              : mode === "forgot"
-                ? "Reset Password"
-                : "Login"}
+            {mode === "register" ? "Create Account" : mode === "forgot" ? "Reset Password" : "Login"}
           </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {mode === "register" && (
-              <input
-                name="name"
-                placeholder="Full Name"
-                value={form.name}
-                onChange={handleChange}
-                required
-              />
-            )}
-            <input
-              name="email"
-              type="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
+            {mode === "register" && <input name="name" placeholder="Full Name" value={form.name} onChange={handleChange} required />}
+            <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} required />
             {(mode === "login" || mode === "register") && (
-              <input
-                name="password"
-                type="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={handleChange}
-                required
-              />
+              <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} required />
             )}
-            {error && (
-              <div className="text-red-500 text-sm text-center">{error}</div>
-            )}
+            {error && <div className="text-red-500 text-sm text-center">{error}</div>}
             <button className="w-full bg-green-600 hover:bg-green-700 text-white">
-              {mode === "register"
-                ? "Register"
-                : mode === "forgot"
-                  ? "Send Reset Link"
-                  : "Login"}
+              {mode === "register" ? "Register" : mode === "forgot" ? "Send Reset Link" : "Login"}
             </button>
           </form>
           <div className="mt-4 text-xs text-center text-gray-600">

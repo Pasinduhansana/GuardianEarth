@@ -5,6 +5,7 @@ import { ShieldCheck, User, Mail, Lock, Phone, Eye, EyeOff } from "lucide-react"
 import { BackgroundBeams } from "../Components/ui/background-beams";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "../config/api";
 import bgimage from "../assets/login.jpg";
 
 function Register() {
@@ -30,7 +31,7 @@ function Register() {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/register", {
+      const res = await axios.post(`${API_BASE_URL}/api/auth/register`, {
         name,
         email,
         phone,
@@ -125,7 +126,7 @@ function Register() {
                     >
                       {label}
                     </span>
-                  )
+                  ),
                 )}
                 {/* Duplicate for smooth continuous scroll */}
                 {["Flood", "Earthquake", "Fire", "Storm", "Landslide", "Evacuation", "Emergency Alert", "Tsunami", "Wildfire", "Cyclone"].map(
@@ -136,7 +137,7 @@ function Register() {
                     >
                       {label}
                     </span>
-                  )
+                  ),
                 )}
               </div>
             </div>

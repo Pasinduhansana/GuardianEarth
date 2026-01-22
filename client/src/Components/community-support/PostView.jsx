@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../context/AuthContext";
+import { API_BASE_URL } from "../../config/api";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "../ui/hover-card";
 import {
   ThumbsUp,
@@ -129,7 +130,7 @@ const PostView = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/posts");
+      const response = await fetch(`${API_BASE_URL}/api/posts`);
       const data = await response.json();
       const approvedPosts = Array.isArray(data)
         ? data.filter((post) => post.status === "approved").sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
@@ -191,7 +192,7 @@ const PostView = () => {
 
   const handleLike = async (postId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/posts/${postId}/like`, {
+      const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/like`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -233,7 +234,7 @@ const PostView = () => {
     setPosts((prevPosts) => prevPosts.map((post) => (post._id === postId ? { ...post, comments: [...post.comments, newComment] } : post)));
 
     try {
-      const response = await fetch(`http://localhost:5000/api/posts/${postId}/comment`, {
+      const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/comment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -842,7 +843,7 @@ const PostView = () => {
                             posts.reduce((acc, post) => {
                               acc[post.category] = (acc[post.category] || 0) + 1;
                               return acc;
-                            }, {})
+                            }, {}),
                           ).sort((a, b) => b[1] - a[1])[0]?.[0]) ||
                         "N/A"
                       : "N/A"}

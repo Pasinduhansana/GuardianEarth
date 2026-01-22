@@ -5,6 +5,7 @@ import { ShieldCheck, Mail, Lock, Eye, EyeOff, Check } from "lucide-react";
 import { BackgroundBeams } from "../Components/ui/background-beams";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "../config/api";
 import bgimage from "../assets/bg7.jpg";
 import { AuthContext } from "../context/AuthContext";
 
@@ -19,7 +20,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         email,
         password,
       });

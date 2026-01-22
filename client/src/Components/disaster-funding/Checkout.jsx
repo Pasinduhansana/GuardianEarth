@@ -1,10 +1,4 @@
-import {
-  useStripe,
-  useElements,
-  CardNumberElement,
-  CardExpiryElement,
-  CardCvcElement,
-} from "@stripe/react-stripe-js";
+import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from "@stripe/react-stripe-js";
 import { useState, useContext } from "react";
 import Stripe_img from "../../assets/Icons/Stripe.png";
 import Amex_img from "../../assets/Icons/American Express.png";
@@ -12,6 +6,7 @@ import toast from "react-hot-toast";
 import jsPDF from "jspdf";
 import { SiTicktick } from "react-icons/si";
 import { AuthContext } from "../../context/AuthContext";
+import { API_BASE_URL } from "../../config/api";
 
 function CheckoutForm({ refreshPayments, selectedDisaster }) {
   const stripe = useStripe();
@@ -140,7 +135,7 @@ function CheckoutForm({ refreshPayments, selectedDisaster }) {
       return;
     }
 
-    fetch("http://localhost:5000/api/payment/stripe-payment", {
+    fetch(`${API_BASE_URL}/api/payment/stripe-payment`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -208,15 +203,10 @@ function CheckoutForm({ refreshPayments, selectedDisaster }) {
   // };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className=" mx-auto space-y-4  ml-0 pr-6 mr-auto mt-5  w-full dark:bg-slate-800 transition-all "
-    >
+    <form onSubmit={handleSubmit} className=" mx-auto space-y-4  ml-0 pr-6 mr-auto mt-5  w-full dark:bg-slate-800 transition-all ">
       {/* Name Input */}
       <div className="mb-4 text-left">
-        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">
-          Name
-        </label>
+        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">Name</label>
         <input
           type="text"
           className="w-full p-3 h-9 rounded-lg text-[14px] border focus:ring-0 focus:border-1 outline-none border-border-border1  focus:border-primary-light bg-gray-0 dark:bg-gray-800 text-text-primary dark:text-text-dark"
@@ -225,16 +215,12 @@ function CheckoutForm({ refreshPayments, selectedDisaster }) {
           onChange={handleNameChange}
         />
         {/* Error Message */}
-        {nameError && (
-          <p className="text-red-500 text-[12px] mt-1 pl-3">{nameError}</p>
-        )}
+        {nameError && <p className="text-red-500 text-[12px] mt-1 pl-3">{nameError}</p>}
       </div>
 
       {/* Email Input */}
       <div className="mb-4 text-left">
-        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">
-          Email
-        </label>
+        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">Email</label>
         <div className="relative flex items-center">
           <input
             type="email"
@@ -250,16 +236,12 @@ function CheckoutForm({ refreshPayments, selectedDisaster }) {
           )}
         </div>
         {/* Error Message */}
-        {email_error && (
-          <p className="text-red-500 text-[12px] mt-1 pl-3">{email_error}</p>
-        )}
+        {email_error && <p className="text-red-500 text-[12px] mt-1 pl-3">{email_error}</p>}
       </div>
 
       {/* Amount Input */}
       <div className="mb-4 text-left">
-        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">
-          Amount
-        </label>
+        <label className="block text-[12px] ml-3 font-semibold text-gray-700 mb-1">Amount</label>
         <input
           type="Number"
           className="w-full p-3 h-9 rounded-lg text-[14px] border focus:ring-0 focus:border-1 outline-none border-border-border1  focus:border-primary-light bg-gray-0 dark:bg-gray-800 text-text-primary dark:text-text-dark"
@@ -271,48 +253,27 @@ function CheckoutForm({ refreshPayments, selectedDisaster }) {
           step="1"
         />
         {/* Error Message */}
-        {amount < 100 && amount && (
-          <p className="text-red-500 text-[12px] mt-1 pl-3">
-            Amount must be a positive number and at least $100.
-          </p>
-        )}
+        {amount < 100 && amount && <p className="text-red-500 text-[12px] mt-1 pl-3">Amount must be a positive number and at least $100.</p>}
       </div>
 
       {/* Card Selection */}
       <div className="mb-4">
-        <label className="block text-[12px] text-left ml-3 font-semibold text-gray-700 mb-1">
-          Select Card
-        </label>
+        <label className="block text-[12px] text-left ml-3 font-semibold text-gray-700 mb-1">Select Card</label>
         <div className="flex gap-4">
           {/* Visa */}
           <label
             className={`cursor-pointer transition-all border  hover:scale-115  duration-300 shadow-lg rounded-[4px] p-2 w-20 h-9 ${
-              cardType === "visa"
-                ? "border-primary-light shadow-xl border-[1.8px]"
-                : "border-border-default border-[1px]"
+              cardType === "visa" ? "border-primary-light shadow-xl border-[1.8px]" : "border-border-default border-[1px]"
             }`}
           >
-            <input
-              type="radio"
-              name="cardType"
-              className="hidden"
-              value="visa"
-              checked={cardType === "visa"}
-              onChange={() => setCardType("visa")}
-            />
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"
-              alt="Visa"
-              className="h-full w-auto mx-auto object-fill"
-            />
+            <input type="radio" name="cardType" className="hidden" value="visa" checked={cardType === "visa"} onChange={() => setCardType("visa")} />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" className="h-full w-auto mx-auto object-fill" />
           </label>
 
           {/* MasterCard */}
           <label
             className={`cursor-pointer transition-all border  hover:scale-115  duration-300 shadow-lg rounded-[4px] p-2 w-20 h-9 ${
-              cardType === "mastercard"
-                ? "border-primary-light shadow-xl border-[1.8px]"
-                : "border-border-default border-[1px]"
+              cardType === "mastercard" ? "border-primary-light shadow-xl border-[1.8px]" : "border-border-default border-[1px]"
             }`}
           >
             <input
@@ -333,32 +294,17 @@ function CheckoutForm({ refreshPayments, selectedDisaster }) {
           {/* American Express */}
           <label
             className={`cursor-pointer transition-all border  hover:scale-115  duration-300 shadow-lg rounded-[4px] p-2 w-20 h-9 ${
-              cardType === "amex"
-                ? "border-primary-light shadow-xl border-[1.8px]"
-                : "border-border-default border-[1px]"
+              cardType === "amex" ? "border-primary-light shadow-xl border-[1.8px]" : "border-border-default border-[1px]"
             }`}
           >
-            <input
-              type="radio"
-              name="cardType"
-              className="hidden"
-              value="amex"
-              checked={cardType === "amex"}
-              onChange={() => setCardType("amex")}
-            />
-            <img
-              src={Amex_img}
-              alt="American Express"
-              className="h-full w-32 mx-auto object-cover"
-            />
+            <input type="radio" name="cardType" className="hidden" value="amex" checked={cardType === "amex"} onChange={() => setCardType("amex")} />
+            <img src={Amex_img} alt="American Express" className="h-full w-32 mx-auto object-cover" />
           </label>
 
           {/* Stripe */}
           <label
             className={`cursor-pointer transition-all border  hover:scale-115  duration-300 shadow-lg rounded-[4px] p-2 w-20 h-9 ${
-              cardType === "Stripe"
-                ? "border-primary-light shadow-xl border-[1.8px]"
-                : "border-border-default border-[1px]"
+              cardType === "Stripe" ? "border-primary-light shadow-xl border-[1.8px]" : "border-border-default border-[1px]"
             }`}
           >
             <input
@@ -369,24 +315,16 @@ function CheckoutForm({ refreshPayments, selectedDisaster }) {
               checked={cardType === "Stripe"}
               onChange={() => setCardType("Stripe")}
             />
-            <img
-              src={Stripe_img}
-              alt="Paypal"
-              className="h-full w-full mx-auto object-cover rounded-[40px]"
-            />
+            <img src={Stripe_img} alt="Paypal" className="h-full w-full mx-auto object-cover rounded-[40px]" />
           </label>
         </div>
       </div>
 
       {/* Card Number */}
       <div className="mb-4">
-        <label className="block text-[12px] text-left ml-3 font-semibold text-gray-700 mb-1">
-          Card Number
-        </label>
+        <label className="block text-[12px] text-left ml-3 font-semibold text-gray-700 mb-1">Card Number</label>
         <div className="p-3 border h-9 rounded-lg focus:ring-0 focus:border-1 outline-none border-border-border1  focus:border-primary-light  bg-gray-0 dark:bg-gray-800">
-          <CardNumberElement
-            options={{ style: { base: { fontSize: "13px", color: "#333" } } }}
-          />
+          <CardNumberElement options={{ style: { base: { fontSize: "13px", color: "#333" } } }} />
         </div>
       </div>
 
@@ -394,42 +332,30 @@ function CheckoutForm({ refreshPayments, selectedDisaster }) {
       <div className="flex gap-4">
         {/* Expiration Date */}
         <div className="w-1/2">
-          <label className="block text-[12px] text-left ml-3 font-semibold text-gray-700 mb-1">
-            Expiration Date
-          </label>
+          <label className="block text-[12px] text-left ml-3 font-semibold text-gray-700 mb-1">Expiration Date</label>
           <div className="p-3 border border-x-border-border1  h-9 rounded-lg bg-[white] dark:bg-gray-800">
-            <CardExpiryElement
-              options={{ style: { base: { fontSize: "13px", color: "#333" } } }}
-            />
+            <CardExpiryElement options={{ style: { base: { fontSize: "13px", color: "#333" } } }} />
           </div>
         </div>
 
         {/* CVC */}
         <div className="w-1/2">
-          <label className="block text-[12px] text-left ml-3 font-semibold text-gray-700 mb-1">
-            CVC
-          </label>
+          <label className="block text-[12px] text-left ml-3 font-semibold text-gray-700 mb-1">CVC</label>
           <div className="p-3 border h-9 rounded-lg border-border-border1   bg-[white] dark:bg-gray-800">
-            <CardCvcElement
-              options={{ style: { base: { fontSize: "13px", color: "#333" } } }}
-            />
+            <CardCvcElement options={{ style: { base: { fontSize: "13px", color: "#333" } } }} />
           </div>
         </div>
       </div>
 
       {/* Error Message */}
-      {error && (
-        <p className="text-red-500 text-[12px] mt-2 text-left pl-3">{error}</p>
-      )}
+      {error && <p className="text-red-500 text-[12px] mt-2 text-left pl-3">{error}</p>}
 
       {/* Submit Button */}
       <button
         type="submit"
         disabled={!stripe || loading}
         className={`w-full bg-primary-light h-10 text-white rounded-lg font-semibold mt-6 transition duration-300 ${
-          loading
-            ? "opacity-50"
-            : "hover:bg-hover-light dark:hover:bg-hover-dark"
+          loading ? "opacity-50" : "hover:bg-hover-light dark:hover:bg-hover-dark"
         }`}
       >
         {loading ? "Processing..." : "Pay Now"}

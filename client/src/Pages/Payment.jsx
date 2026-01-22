@@ -8,6 +8,7 @@ import earth_img from "../assets/Earth.webp";
 import BankSelector from "../Components/disaster-funding/Bank-Selector";
 import { AuroraBackground } from "../Components/ui/aurora-background";
 import { AuthContext } from "../context/AuthContext";
+import { API_BASE_URL } from "../config/api";
 import { AlertCircle, Globe, Users, DollarSign, Clock, Shield, Heart, MapPin, Calendar, X, BadgeCheck, XCircle } from "lucide-react";
 
 const stripePromise = loadStripe("pk_test_51QyzW0F1MqlTWE7FVvTcRhf9uQFUPTOp9d3PdQ99tsftMm8mpJr71Eu8hohiAYUu3Ruf80xMXceVVzLrRIv1dZDG003Us4ou4b");
@@ -40,7 +41,7 @@ function Payment() {
 
   const fetchPayments = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/payment/user/${user_ID}`);
+      const response = await fetch(`${API_BASE_URL}/api/payment/user/${user_ID}`);
       const data = await response.json();
       setPayments(data.payments || []);
     } catch (error) {
@@ -58,7 +59,7 @@ function Payment() {
     document.title = "Guardian Earth";
 
     const fetchDisasters = async () => {
-      const response = await fetch("http://localhost:5000/api/disaster");
+      const response = await fetch(`${API_BASE_URL}/api/disaster`);
       const data = await response.json();
       setDisasters(data.disasters || []);
     };
@@ -119,7 +120,7 @@ function Payment() {
       let fileName = "";
 
       try {
-        const response = await fetch("http://localhost:5000/api/uploadfile", {
+        const response = await fetch(`${API_BASE_URL}/api/uploadfile`, {
           // Updated endpoint
           method: "POST",
           body: formData,
@@ -148,7 +149,7 @@ function Payment() {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/payment/verify-bank-payment", {
+      const response = await fetch(`${API_BASE_URL}/api/payment/verify-bank-payment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -169,7 +170,7 @@ function Payment() {
       const payment_Id = result.paymentId;
 
       if (response.ok) {
-        const responsemail = await fetch("http://localhost:5000/api/email", {
+        const responsemail = await fetch(`${API_BASE_URL}/api/email`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

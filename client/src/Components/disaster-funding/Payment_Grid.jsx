@@ -4,6 +4,7 @@ import { IoDocumentOutline } from "react-icons/io5";
 import { MdDeleteForever } from "react-icons/md";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "../../config/api";
 const Payment_Grid = ({ payments, loading, filterText_pros, sortOrder__pros, fetchPayments, onViewDetails }) => {
   const deleteToastRef = useRef(null);
   // Filter payments based on transaction ID
@@ -13,7 +14,7 @@ const Payment_Grid = ({ payments, loading, filterText_pros, sortOrder__pros, fet
       payment.user?.toLowerCase().includes(filterText_pros.toLowerCase()) ||
       payment.createdAt?.toLowerCase().includes(filterText_pros.toLowerCase()) ||
       payment.status?.toLowerCase().includes(filterText_pros.toLowerCase()) ||
-      payment.currency?.toLowerCase().includes(filterText_pros.toLowerCase())
+      payment.currency?.toLowerCase().includes(filterText_pros.toLowerCase()),
   );
 
   // Sort payments based on selected option
@@ -35,7 +36,7 @@ const Payment_Grid = ({ payments, loading, filterText_pros, sortOrder__pros, fet
   const approvePayment = async (id, action_status) => {
     console.log(id);
     try {
-      await axios.put(`http://localhost:5000/api/payment/${id}`, {
+      await axios.put(`${API_BASE_URL}/api/payment/${id}`, {
         status: action_status, // Ensure backend updates status
       });
       fetchPayments(); // Refresh the list after approval
@@ -65,7 +66,7 @@ const Payment_Grid = ({ payments, loading, filterText_pros, sortOrder__pros, fet
                   deleteToastRef.current = null;
 
                   console.log("Deleting payment with ID:", id);
-                  await axios.delete(`http://localhost:5000/api/payment/delete/${id}`);
+                  await axios.delete(`${API_BASE_URL}/api/payment/delete/${id}`);
                   fetchPayments(); // Refresh the list after deletion
 
                   // Show success message only once
@@ -94,7 +95,7 @@ const Payment_Grid = ({ payments, loading, filterText_pros, sortOrder__pros, fet
       {
         duration: Infinity,
         position: "top-center",
-      }
+      },
     );
   };
 

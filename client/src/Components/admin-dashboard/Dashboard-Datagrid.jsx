@@ -1,6 +1,7 @@
 import React from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { API_BASE_URL } from "../../config/api";
 
 const Dashboard_grid = ({ recodes, loading, fetchdata, onSync, onLoadDataset }) => {
   const handleDelete = async (id) => {
@@ -12,7 +13,7 @@ const Dashboard_grid = ({ recodes, loading, fetchdata, onSync, onLoadDataset }) 
             <button
               onClick={async () => {
                 try {
-                  await axios.delete(`http://localhost:5000/api/Dashboard/${id}`);
+                  await axios.delete(`${API_BASE_URL}/api/Dashboard/${id}`);
                   fetchdata();
                   toast.dismiss(t.id);
                   toast.success("Recode deleted successfully!");
@@ -31,7 +32,7 @@ const Dashboard_grid = ({ recodes, loading, fetchdata, onSync, onLoadDataset }) 
           </div>
         </div>
       ),
-      { duration: 5000, position: "top-center" }
+      { duration: 5000, position: "top-center" },
     );
   };
 

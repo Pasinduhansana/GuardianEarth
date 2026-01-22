@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../config/api";
 import {
   Button,
   Modal,
@@ -37,7 +38,7 @@ const AdminPanel = () => {
   // Fetch all posts
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/posts")
+      .get(`${API_BASE_URL}/api/posts`)
       .then((response) => {
         setPosts(response.data);
         setLoading(false);
@@ -136,34 +137,22 @@ const AdminPanel = () => {
 
       if (editingPost) {
         // If editing, update the post
-        response = await axios.put(
-          `http://localhost:5000/api/posts/${editingPost._id}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data", // Ensure multipart form data header is set
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        response = await axios.put(`${API_BASE_URL}/api/posts/${editingPost._id}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data", // Ensure multipart form data header is set
+            Authorization: `Bearer ${token}`,
+          },
+        });
         // Update the post in the UI after editing
-        setPosts(
-          posts.map((post) =>
-            post._id === editingPost._id ? response.data : post
-          )
-        );
+        setPosts(posts.map((post) => (post._id === editingPost._id ? response.data : post)));
       } else {
         // If creating a new post
-        response = await axios.post(
-          "http://localhost:5000/api/posts",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        response = await axios.post(`${API_BASE_URL}/api/posts`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setPosts([...posts, response.data]); // Update UI with the new post
       }
 
@@ -236,12 +225,7 @@ const AdminPanel = () => {
       </h1>
 
       {/* Create New Post Button */}
-      <Button
-        variant="contained"
-        color="primary"
-        style={{ position: "absolute", top: 20, right: 20 }}
-        onClick={() => setOpen(true)}
-      >
+      <Button variant="contained" color="primary" style={{ position: "absolute", top: 20, right: 20 }} onClick={() => setOpen(true)}>
         Create New Post
       </Button>
 
@@ -262,59 +246,29 @@ const AdminPanel = () => {
               }}
             >
               <CardContent>
-                <Typography
-                  variant="h4"
-                  sx={{ fontWeight: "bold", color: "#333" }}
-                >
+                <Typography variant="h4" sx={{ fontWeight: "bold", color: "#333" }}>
                   {post.title}
                 </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ margin: "10px 0", color: "#666" }}
-                >
+                <Typography variant="body1" sx={{ margin: "10px 0", color: "#666" }}>
                   {post.description}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ fontSize: "16px", color: "#888" }}
-                >
+                <Typography variant="body2" sx={{ fontSize: "16px", color: "#888" }}>
                   <strong>Category:</strong> {post.category}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ fontSize: "16px", color: "#888" }}
-                >
+                <Typography variant="body2" sx={{ fontSize: "16px", color: "#888" }}>
                   <strong>Location:</strong> {post.location}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ fontSize: "16px", color: "#888" }}
-                >
-                  <strong>Date:</strong>{" "}
-                  {new Date(post.disasterDate).toLocaleDateString()}
+                <Typography variant="body2" sx={{ fontSize: "16px", color: "#888" }}>
+                  <strong>Date:</strong> {new Date(post.disasterDate).toLocaleDateString()}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{ fontSize: "16px", color: "#888" }}
-                >
+                <Typography variant="body2" sx={{ fontSize: "16px", color: "#888" }}>
                   <strong>Upcoming:</strong> {post.isUpcoming ? "Yes" : "No"}
                 </Typography>
                 {post.imageUrl && (
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={post.imageUrl}
-                    alt="Post Image"
-                    sx={{ marginTop: "20px", objectFit: "cover" }}
-                  />
+                  <CardMedia component="img" height="200" image={post.imageUrl} alt="Post Image" sx={{ marginTop: "20px", objectFit: "cover" }} />
                 )}
                 <div style={{ marginTop: "20px" }}>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    style={{ marginRight: "15px" }}
-                    onClick={() => handleEdit(post)}
-                  >
+                  <Button variant="outlined" color="secondary" style={{ marginRight: "15px" }} onClick={() => handleEdit(post)}>
                     <Edit />
                     Edit
                   </Button>
@@ -346,15 +300,7 @@ const AdminPanel = () => {
         >
           <h2>{editingPost ? "Edit Post" : "Create New Post"}</h2>
           <form onSubmit={handleSubmit}>
-            <TextField
-              label="Title"
-              name="title"
-              fullWidth
-              margin="normal"
-              value={newPost.title}
-              onChange={handleChange}
-              required
-            />
+            <TextField label="Title" name="title" fullWidth margin="normal" value={newPost.title} onChange={handleChange} required />
             <TextField
               label="Description"
               name="description"
@@ -370,26 +316,13 @@ const AdminPanel = () => {
             {/* Category Dropdown */}
             <FormControl fullWidth margin="normal" required>
               <InputLabel>Category</InputLabel>
-              <Select
-                name="category"
-                value={newPost.category}
-                onChange={handleChange}
-                label="Category"
-              >
+              <Select name="category" value={newPost.category} onChange={handleChange} label="Category">
                 <MenuItem value="Disaster">Disaster</MenuItem>
                 <MenuItem value="Resources">Resources</MenuItem>
               </Select>
             </FormControl>
 
-            <TextField
-              label="Location"
-              name="location"
-              fullWidth
-              margin="normal"
-              value={newPost.location}
-              onChange={handleChange}
-              required
-            />
+            <TextField label="Location" name="location" fullWidth margin="normal" value={newPost.location} onChange={handleChange} required />
 
             {/* Date Input */}
             <TextField
@@ -407,13 +340,7 @@ const AdminPanel = () => {
             {/* Conditionally render isUpcoming based on category */}
             {newPost.category === "Disaster" && (
               <FormControlLabel
-                control={
-                  <Checkbox
-                    name="isUpcoming"
-                    checked={newPost.isUpcoming}
-                    onChange={handleChange}
-                  />
-                }
+                control={<Checkbox name="isUpcoming" checked={newPost.isUpcoming} onChange={handleChange} />}
                 label="Is this an upcoming disaster?"
               />
             )}
@@ -430,11 +357,7 @@ const AdminPanel = () => {
               <Button type="submit" variant="contained" color="primary">
                 {editingPost ? "Update Post" : "Create Post"}
               </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={handleClose}
-              >
+              <Button variant="outlined" color="secondary" onClick={handleClose}>
                 Cancel
               </Button>
             </div>

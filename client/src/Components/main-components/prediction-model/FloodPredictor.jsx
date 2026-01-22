@@ -5,6 +5,7 @@ import html2canvas from "html2canvas";
 import { CiExport } from "react-icons/ci";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Brain, Database, TrendingUp, CheckCircle2 } from "lucide-react";
+import { FLOOD_API_URL } from "../../../config/api";
 
 function FloodPredictor() {
   const [inputs, setInputs] = useState({
@@ -53,7 +54,7 @@ function FloodPredictor() {
     setCurrentStep(0);
 
     try {
-      const res = await axios.post("http://localhost:5001/predict", inputs);
+      const res = await axios.post(`${FLOOD_API_URL}/predict`, inputs);
 
       // Delay showing result by 5 seconds
       setTimeout(() => {

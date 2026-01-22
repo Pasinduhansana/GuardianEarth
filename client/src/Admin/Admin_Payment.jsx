@@ -13,6 +13,7 @@ import invoice_jpg from "../assets/Icons/invoice.png";
 import { FaFilePdf } from "react-icons/fa6";
 import html2pdf from "html2pdf.js";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "../config/api";
 
 const Admin_Payment = () => {
   const [payments, setPayments] = useState([]);
@@ -202,7 +203,7 @@ const Admin_Payment = () => {
   const fetchPayments = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/payment/");
+      const response = await fetch(`${API_BASE_URL}/api/payment/`);
       const data = await response.json(); // Convert response to JSON
       setPayments(data); // Set the data to state
       console.log(data);

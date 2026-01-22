@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import Modal from "../Components/main-components/Model";
 import { Bell, PiggyBank, HandCoins, Users, BarChart3, FileDown, Plus } from "lucide-react";
 import { StatsCardSkeleton, ChartSkeleton, TableSkeleton } from "../Components/ui/LoadingSkeleton";
+import { API_BASE_URL } from "../config/api";
 
 const Dashboard = () => {
   const [payment_data, setPayment_data] = useState([]);
@@ -36,7 +37,7 @@ const Dashboard = () => {
 
   const fetchDatasetRecords = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/dashboard/");
+      const response = await fetch(`${API_BASE_URL}/api/dashboard/`);
       const data = await response.json();
       // If your backend returns an array, use it directly
       setDatasetRecords(Array.isArray(data) ? data : []);
@@ -83,7 +84,7 @@ const Dashboard = () => {
     };
 
     try {
-      const response = await fetch(`http://localhost:5000/api/dashboard/${recodeId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/dashboard/${recodeId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedRecode),
@@ -178,7 +179,7 @@ const Dashboard = () => {
   // Fetch all disasters from backend
   const fetchDisasters = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/disaster");
+      const response = await fetch(`${API_BASE_URL}/api/disaster`);
       const data = await response.json();
       setDisasters(data.disasters || []);
     } catch (error) {
@@ -243,7 +244,7 @@ const Dashboard = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/auth/users", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/users`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -259,7 +260,7 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/dashboard/");
+      const response = await fetch(`${API_BASE_URL}/api/dashboard/`);
       const data = await response.json();
       setDashboardData({
         Donations: data.Donations ?? "",
@@ -327,7 +328,7 @@ const Dashboard = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/dashboard/add", {
+      const response = await fetch(`${API_BASE_URL}/api/dashboard/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -381,7 +382,7 @@ const Dashboard = () => {
   const fetchPayments = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/payment/");
+      const response = await fetch(`${API_BASE_URL}/api/payment/`);
       const data = await response.json(); // Convert response to JSON
       setPayment_data(data); // Set the data to state
     } catch (error) {

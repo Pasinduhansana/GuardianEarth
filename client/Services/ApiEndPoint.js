@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const instance = axios.create({
-  baseURL: "https://artisanbespokefurniture.com",
+  baseURL: API_BASE_URL,
   Headers: {
     "Content-Type": "application/json",
   },
@@ -18,15 +20,11 @@ export const updateUser = async (userId, formData) => {
     if (userId === undefined) {
       throw new Error("User ID is required to update user data");
     }
-    const response = await instance.put(
-      `/api/auth/update/${userId}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data", // Set the content type for form data
-        },
-      }
-    );
+    const response = await instance.put(`/api/auth/update/${userId}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // Set the content type for form data
+      },
+    });
     return response.data; // Return the response data
   } catch (error) {
     throw error; // Rethrow the error to handle it in the calling function
@@ -36,15 +34,11 @@ export const updateUser = async (userId, formData) => {
 export const updateAdmin = async (userId, formData) => {
   try {
     console.log(userId);
-    const response = await instance.put(
-      `/api/admin/update/${userId}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data", // Set the content type for form data
-        },
-      }
-    );
+    const response = await instance.put(`/api/admin/update/${userId}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // Set the content type for form data
+      },
+    });
     return response.data; // Return the response data
   } catch (error) {
     throw error; // Rethrow the error to handle it in the calling function
@@ -59,7 +53,7 @@ axios.interceptors.request.use(
   function (error) {
     // Do something with request error
     return Promise.reject(error);
-  }
+  },
 );
 
 // Add a response interceptor
@@ -74,5 +68,5 @@ axios.interceptors.response.use(
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     return Promise.reject(error);
-  }
+  },
 );

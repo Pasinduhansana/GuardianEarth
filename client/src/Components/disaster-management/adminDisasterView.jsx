@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import Modal from "../main-components/Model";
 import DisasterForm from "./DisasterForm";
 import { CardSkeleton } from "../ui/LoadingSkeleton";
+import { API_BASE_URL } from "../../config/api";
 
 const AdminDisasterView = () => {
   const [imageModalUrl, setImageModalUrl] = useState(null);
@@ -29,7 +30,7 @@ const AdminDisasterView = () => {
   const fetchDisasters = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/disaster");
+      const response = await fetch(`${API_BASE_URL}/api/disaster`);
       const data = await response.json();
       const filteredDisasters = Array.isArray(data.disasters)
         ? statusFilter === "All"
@@ -57,7 +58,7 @@ const AdminDisasterView = () => {
   const approveDisaster = async (id) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/disaster/${id}/approve`, { method: "PUT" });
+      const response = await fetch(`${API_BASE_URL}/api/disaster/${id}/approve`, { method: "PUT" });
       if (!response.ok) throw new Error("Failed to approve disaster");
       toast.success("Disaster approved successfully");
       fetchDisasters();
@@ -71,7 +72,7 @@ const AdminDisasterView = () => {
   const rejectDisaster = async (id) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/disaster/${id}/reject`, { method: "PUT" });
+      const response = await fetch(`${API_BASE_URL}/api/disaster/${id}/reject`, { method: "PUT" });
       if (!response.ok) throw new Error("Failed to reject disaster");
       toast.success("Disaster rejected");
       fetchDisasters();
@@ -94,7 +95,7 @@ const AdminDisasterView = () => {
             <button
               onClick={async () => {
                 try {
-                  const response = await fetch(`http://localhost:5000/api/disaster/${id}`, { method: "DELETE" });
+                  const response = await fetch(`${API_BASE_URL}/api/disaster/${id}`, { method: "DELETE" });
                   const data = await response.json();
                   if (!response.ok) throw new Error(data.message || "Failed to delete disaster");
                   setDisasters((prev) => prev.filter((d) => d._id !== id));

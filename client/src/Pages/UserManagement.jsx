@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "../config/api";
 import Modal from "../Components/main-components/Model";
 import {
   UserPlus,
@@ -82,7 +83,7 @@ export const UserManagement = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/api/auth/users", {
+      const response = await axios.get(`${API_BASE_URL}/api/auth/users`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`, // Include token if required
         },
@@ -129,7 +130,7 @@ export const UserManagement = () => {
   const toggleUserStatus = async (userId, action) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/auth/users/${userId}/${action}`,
+        `${API_BASE_URL}/api/auth/users/${userId}/${action}`,
         {},
         {
           headers: {
@@ -167,7 +168,7 @@ export const UserManagement = () => {
             <button
               onClick={async () => {
                 try {
-                  const response = await axios.delete(`http://localhost:5000/api/auth/users/${userId}`, {
+                  const response = await axios.delete(`${API_BASE_URL}/api/auth/users/${userId}`, {
                     headers: {
                       Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
@@ -214,7 +215,7 @@ export const UserManagement = () => {
   const handleUpdateUser = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/auth/users/${selectedUser._id}`,
+        `${API_BASE_URL}/api/auth/users/${selectedUser._id}`,
         {
           name: selectedUser.name,
           email: selectedUser.email,

@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import toast from "react-hot-toast";
 import Modal from "../main-components/Model";
 import { useModal } from "../main-components/ModalContext";
+import { API_BASE_URL } from "../../config/api";
 
 import PostForm from "./PostForm";
 
@@ -43,7 +44,7 @@ const adminPostView = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/api/posts");
+      const response = await fetch(`${API_BASE_URL}/api/posts`);
       const data = await response.json();
       const filtered = Array.isArray(data)
         ? data
@@ -80,7 +81,7 @@ const adminPostView = () => {
   const approvePost = async (postId) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/posts/${postId}/approve`, {
+      const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/approve`, {
         method: "PUT",
       });
       if (!response.ok) throw new Error("Failed to approve post");
@@ -96,7 +97,7 @@ const adminPostView = () => {
   const rejectPost = async (postId) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/posts/${postId}/reject`, {
+      const response = await fetch(`${API_BASE_URL}/api/posts/${postId}/reject`, {
         method: "PUT",
       });
       if (!response.ok) throw new Error("Failed to reject post");
@@ -158,7 +159,7 @@ const adminPostView = () => {
                   deleteToastRef.current = null;
 
                   // Send DELETE request to backend
-                  const response = await fetch(`http://localhost:5000/api/posts/${postId}`, {
+                  const response = await fetch(`${API_BASE_URL}/api/posts/${postId}`, {
                     method: "DELETE",
                   });
 

@@ -8,6 +8,7 @@ import { useModal } from "../main-components/ModalContext";
 import { FaEdit } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
 import { AuthContext } from "../../context/AuthContext";
+import { API_BASE_URL } from "../../config/api";
 
 import Modal from "../main-components/Model";
 import { FileText, MapPin, Users, Calendar, Phone, Edit, Trash2, LayoutGrid, List, Plus } from "lucide-react";
@@ -56,7 +57,7 @@ export default function ViewDisasters() {
 
   const fetchDisaster = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/disaster", {
+      const response = await fetch(`${API_BASE_URL}/api/disaster`, {
         method: "GET",
       });
 
@@ -89,7 +90,7 @@ export default function ViewDisasters() {
             <div className="flex gap-2">
               <button
                 onClick={async () => {
-                  const response = await fetch(`http://localhost:5000/api/disaster/${id}`, {
+                  const response = await fetch(`${API_BASE_URL}/api/disaster/${id}`, {
                     method: "DELETE",
                   });
 
@@ -117,7 +118,7 @@ export default function ViewDisasters() {
         {
           duration: 3000,
           position: "top-center",
-        }
+        },
       );
     } catch (error) {
       console.error("Error deleting disaster:", error.message);

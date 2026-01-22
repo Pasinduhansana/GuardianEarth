@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Lock, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { API_BASE_URL } from "../config/api";
 import { BackgroundBeams } from "../Components/ui/background-beams";
 import { useSearchParams } from "react-router-dom";
 import bgimage from "../assets/map3.png";
@@ -27,7 +28,7 @@ const ResetPassword = () => {
         toast.error("Passwords do not match!");
         return;
       }
-      await axios.post("http://localhost:5000/api/auth/reset-password", {
+      await axios.post(`${API_BASE_URL}/api/auth/reset-password`, {
         email,
         password,
       });
@@ -45,11 +46,7 @@ const ResetPassword = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-900 relative">
-      <img
-        src={bgimage}
-        alt=""
-        className="absolute w-full h-full object-cover "
-      />
+      <img src={bgimage} alt="" className="absolute w-full h-full object-cover " />
       <BackgroundBeams />
 
       <div className="absolute inset-0 bg-gradient-to-br from-transparent to-green-900/10 pointer-events-none" />
@@ -64,9 +61,7 @@ const ResetPassword = () => {
           >
             <div className="text-center">
               <ShieldCheck className="mx-auto h-12 w-12 text-green-600" />
-              <h2 className="mt-4 text-2xl font-bold text-gray-900">
-                Reset Password
-              </h2>
+              <h2 className="mt-4 text-2xl font-bold text-gray-900">Reset Password</h2>
               <p className="text-sm text-gray-600">for {email}</p>
             </div>
 
@@ -86,11 +81,7 @@ const ResetPassword = () => {
                   onClick={() => setShowPassword((prev) => !prev)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                 >
-                  {!showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
+                  {!showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
 
@@ -109,26 +100,17 @@ const ResetPassword = () => {
                   onClick={() => setShowPassword1((prev) => !prev)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                 >
-                  {!showPassword1 ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
+                  {!showPassword1 ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
 
-              <button
-                type="submit"
-                className="w-full py-2 px-4 text-white font-normal bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
-              >
+              <button type="submit" className="w-full py-2 px-4 text-white font-normal bg-green-600 hover:bg-green-700 rounded-lg transition-colors">
                 Reset Password
               </button>
             </form>
             {success && (
               <div className="text-center mt-6">
-                <p className="text-green-600 font-medium">
-                  🎉 Your password has been reset successfully!
-                </p>
+                <p className="text-green-600 font-medium">🎉 Your password has been reset successfully!</p>
                 <p className="text-sm text-gray-600">Redirecting to login...</p>
               </div>
             )}
