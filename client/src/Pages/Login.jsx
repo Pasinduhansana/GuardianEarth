@@ -116,7 +116,7 @@ function Login() {
                     >
                       {label}
                     </span>
-                  )
+                  ),
                 )}
                 {/* Duplicate for smooth continuous scroll */}
                 {["Flood", "Earthquake", "Fire", "Storm", "Landslide", "Evacuation", "Emergency Alert", "Tsunami", "Wildfire", "Cyclone"].map(
@@ -127,12 +127,12 @@ function Login() {
                     >
                       {label}
                     </span>
-                  )
+                  ),
                 )}
               </div>
             </div>
           </div>
-          <img src={bgimage} alt="" className=" h-auto object-cover " />
+          <img src={bgimage} alt="" className="h-full w-full object-cover" />
         </div>
 
         {/* Content container */}

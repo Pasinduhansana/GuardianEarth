@@ -118,7 +118,7 @@ const AdminDisasterView = () => {
           </div>
         </div>
       ),
-      { duration: 5000, position: "top-center" }
+      { duration: 5000, position: "top-center" },
     );
   };
 
@@ -335,7 +335,7 @@ const AdminDisasterView = () => {
 
   const SearchBar = () => {
     return (
-      <div className="relative max-w-md w-full">
+      <div className="relative  w-full">
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <FaSearch className="h-4 w-4 text-gray-400 z-50" />
         </div>
@@ -367,9 +367,12 @@ const AdminDisasterView = () => {
       <header className="bg-gray-50 shadow-sm sticky top-0 z-40">
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center text-left">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Disaster Management</h1>
-              <p className="text-sm text-gray-500">Admin Dashboard</p>
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between text-left  mx-4">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Disaster Management</h1>
+                <p className="text-gray-500 text-[14px]">Manage disaster records and their statuses</p>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <SearchBar />
@@ -422,7 +425,7 @@ const AdminDisasterView = () => {
         </div>
       </header>
 
-      <main className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className=" mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-6">
           {/* Left Sidebar - Statistics */}
           <div className="w-72 flex-shrink-0 space-y-4">

@@ -196,7 +196,7 @@ const adminPostView = () => {
       {
         duration: Infinity,
         position: "top-center",
-      }
+      },
     );
   };
 
@@ -530,10 +530,14 @@ const adminPostView = () => {
       <header className="bg-gray-50 shadow-sm sticky top-0 z-40">
         <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center text-left">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Community Management</h1>
-              <p className="text-sm text-gray-500">Admin Dashboard</p>
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between text-left mx-2">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Community Management</h1>
+                <p className="text-gray-500 text-[14px]">Manage community posts and interactions</p>
+              </div>
             </div>
+
             <div className="flex items-center space-x-4">
               <SearchBar />
               {/* Filter Dropdown */}

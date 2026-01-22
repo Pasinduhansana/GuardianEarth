@@ -71,7 +71,7 @@ const Admin_Payment = () => {
           payment.status || "N/A",
         ]
           .map((field) => `"${field}"`)
-          .join(",")
+          .join(","),
       ),
     ];
 
@@ -227,9 +227,17 @@ const Admin_Payment = () => {
   const COLORS = ["#ff9800", "#4caf50"];
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="max-w-[1800px] mx-auto">
-        <div className="flex flex-row justify-between gap-4 ">
+    <div className="p-6 bg-gray-100 min-h-screen h-full ">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between text-left pb-6 mx-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Payment Management</h1>
+          <p className="text-gray-500 text-[14px]">Manage funding and the payment submissions</p>
+        </div>
+      </div>
+
+      <div className="mx-auto  h-full my-0">
+        <div className="flex flex-row justify-between gap-4 w-full  ">
           <div className="flex flex-col gap-5 w-full">
             <div className="flex flex-col bg-white p-5 w-full gap-2 rounded-[5px]">
               <div className="flex flex-row justify-between w-full ">
@@ -301,9 +309,9 @@ const Admin_Payment = () => {
               </div>
             </div>
 
-            <div className="flex flex-col w-full bg-white  rounded-[5px] p-5 gap-5">
-              <div className="flex flex-row justify-between ">
-                <div className="flex flex-col items-start">
+            <div className="flex flex-col w-full bg-white h-full rounded-[5px] p-5 gap-5 pb-[130px]">
+              <div className="flex flex-row justify-between  ">
+                <div className="flex flex-col items-start ">
                   <h2 className="text-text-primary text-[15px] font-semibold">Billing & Donations</h2>
                   <p className="text-text-secondary text-[13px] opacity-70  font-normal">Listed below are all are your donations and bills</p>
                 </div>
@@ -362,7 +370,7 @@ const Admin_Payment = () => {
             </div>
           </div>
 
-          <div className="flex flex-col max-w-screen-lg  bg-white shadow-sm rounded-[5px] p-5 min-w-[300px]">
+          <div className="flex flex-col max-w-screen-lg  w-full  bg-white shadow-sm rounded-[5px] p-6 min-w-[300px]">
             {/* invoice Header */}
             <div className="flex flex-col">
               <div className="flex flex-row items-center">

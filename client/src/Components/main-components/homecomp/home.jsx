@@ -312,7 +312,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="absolute md:w-1/2 bottom-10 left-10 h-auto flex items-center px-4 max-w-md">
+          <div className="absolute md:w-1/2 bottom-10 left-20 h-auto flex items-center px-4 max-w-md">
             <div className="flex -space-x-2 flex-shrink-0">
               <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center border border-white shadow-sm">
                 <FaUserShield className="text-blue-500 text-xs" />
@@ -518,7 +518,7 @@ const Home = () => {
                 {latestDisasters.map((disaster) => (
                   <div
                     key={disaster._id}
-                    className="group/bento shadow-input row-span-1 flex flex-col justify-between rounded-xl border border-neutral-200 bg-white transition duration-200 hover:shadow-xl dark:border-white/[0.2] dark:bg-black dark:shadow-none relative overflow-hidden min-h-[470px] mb-10"
+                    className="group/bento shadow-input row-span-1 flex flex-col justify-between rounded-xl border border-neutral-200 bg-white transition duration-200 hover:shadow-xl dark:border-white/[0.2] dark:bg-black dark:shadow-none relative overflow-hidden min-h-[470px] "
                     style={{
                       backgroundImage: disaster.images && disaster.images.length > 0 ? `url(${disaster.images[0]})` : "none",
                       backgroundSize: "cover",

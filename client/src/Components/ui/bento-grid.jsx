@@ -27,7 +27,7 @@ export const BentoGridItem = ({ className, title, description, header, icon, dat
       className={cn(
         "group/bento shadow-input row-span-1 flex flex-col justify-between  rounded-xl border border-neutral-200 bg-white transition duration-200 hover:shadow-xl dark:border-white/[0.2] dark:bg-black dark:shadow-none relative overflow-hidden",
         className,
-        type === "admin" ? "h-[560px]" : "h-[470px]" // <-- Change this value to your desired card height
+        type === "admin" ? "h-[560px]" : "h-[470px]", // <-- Change this value to your desired card height
       )}
       style={{
         backgroundImage: `url(${icon})`,
@@ -61,10 +61,10 @@ export const BentoGridItem = ({ className, title, description, header, icon, dat
 
             <div className="font-sans mx-6 pt-2 h-full min-h-[50px] text-left text-[12px] font-normal text-white leading-relaxed">
               {description.length > 130 ? (
-                <>
-                  {description.slice(0, 130)}...
+                <div className="flex flex-wrap gap-1 items-baseline">
+                  <span>{description.slice(0, 130)}...</span>
                   <button
-                    className="ml-2 py-1 text-xs text-emerald-300 font-semibold  transition"
+                    className="py-1 text-xs hidden text-emerald-300 font-semibold hover:text-emerald-200 transition whitespace-nowrap"
                     onClick={() => {
                       toast(
                         <div className="flex flex-col gap-2 max-w-md">
@@ -78,13 +78,13 @@ export const BentoGridItem = ({ className, title, description, header, icon, dat
                             padding: "16px",
                           },
                           icon: "📖",
-                        }
+                        },
                       );
                     }}
                   >
                     Read More
                   </button>
-                </>
+                </div>
               ) : (
                 description
               )}

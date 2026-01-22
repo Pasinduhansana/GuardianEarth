@@ -394,17 +394,18 @@ const Dashboard = () => {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
-              <div className="text-left">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-                <p className="text-gray-600 text-base flex items-center gap-2">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                  Monitor, alert, and track resources for effective disaster response
+              <div className="text-left mx-5">
+                <h1 className="text-2xl font-bold text-gray-900">Dashboard Insights</h1>
+                <p className="text-gray-500 text-[14px]">
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>Monitor, alert, and track resources for effective
+                  disaster response
                 </p>
               </div>
+
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <input

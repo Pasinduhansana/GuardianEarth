@@ -135,11 +135,11 @@ export const UserManagement = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       setUsers((prevUsers) =>
-        prevUsers.map((user) => (user._id === userId ? { ...user, status: action === "activate" ? "Active" : "Inactive" } : user))
+        prevUsers.map((user) => (user._id === userId ? { ...user, status: action === "activate" ? "Active" : "Inactive" } : user)),
       );
 
       // Update the selectedUser state if the modal is open
@@ -204,7 +204,7 @@ export const UserManagement = () => {
       {
         duration: 3000,
         position: "top-center",
-      }
+      },
     );
   };
   useEffect(() => {
@@ -224,7 +224,7 @@ export const UserManagement = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       // Update the user list with the updated user details
@@ -430,7 +430,7 @@ export const UserManagement = () => {
                           return userJoinDate === today;
                         }).length /
                           filteredUsers.length) *
-                          100
+                          100,
                       )}
                       %
                     </span>
@@ -647,7 +647,7 @@ export const UserManagement = () => {
                               className={cn(
                                 "inline-flex items-center px-2.5 py-[2px] rounded-full text-xs font-medium",
                                 "bg-gray-100 text-gray-800",
-                                getRoleColor(user.role)
+                                getRoleColor(user.role),
                               )}
                             >
                               {user.role}
@@ -660,7 +660,7 @@ export const UserManagement = () => {
                               className={cn(
                                 "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
                                 "bg-gray-100 text-gray-800",
-                                getRoleColor(user.status)
+                                getRoleColor(user.status),
                               )}
                             >
                               {user.status}
@@ -823,7 +823,7 @@ export const UserManagement = () => {
                         className={cn(
                           "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
                           "bg-gray-100 text-gray-800",
-                          getRoleColor(selectedUser.role)
+                          getRoleColor(selectedUser.role),
                         )}
                       >
                         {selectedUser.role}
@@ -835,7 +835,7 @@ export const UserManagement = () => {
                         className={cn(
                           "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
                           "bg-gray-100 text-gray-800",
-                          getRoleColor(selectedUser.status)
+                          getRoleColor(selectedUser.status),
                         )}
                       >
                         {selectedUser.status}
