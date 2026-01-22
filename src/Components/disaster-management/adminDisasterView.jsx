@@ -1,0 +1,567 @@
+import React, { useState, useEffect, useRef } from "react";
+import { FaEdit, FaTrash, FaSearch, FaCalendarAlt } from "react-icons/fa";
+import { BentoGrid, BentoGridItem } from "../ui/bento-grid";
+import { Plus, LayoutGrid, List, Map } from "lucide-react";
+import { format } from "date-fns";
+import toast from "react-hot-toast";
+import Modal from "../main-components/Model";
+import DisasterForm from "./DisasterForm";
+import { CardSkeleton } from "../ui/LoadingSkeleton";
+import { API_BASE_URL } from "../../config/api";
+
+const AdminDisasterView = () => {
+  const [imageModalUrl, setImageModalUrl] = useState(null);
+  const [imageModalTitle, setImageModalTitle] = useState("");
+  const [imageModalDescription, setImageModalDescription] = useState("");
+  const [disasters, setDisasters] = useState([]);
+  const [error, setError] = useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingDisaster, setEditingDisaster] = useState(null);
+  const [viewMode, setViewMode] = useState("grid");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [shouldFocusSearch, setShouldFocusSearch] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState("All");
+  const deleteToastRef = useRef(null);
+  const searchInputRef = useRef(null);
+
+  // Fetch disasters
+  const fetchDisasters = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/api/disaster`);
+      const data = await response.json();
+      const filteredDisasters = Array.isArray(data.disasters)
+        ? statusFilter === "All"
+          ? data.disasters
+          : data.disasters.filter((d) => d.status === statusFilter)
+        : [];
+      setDisasters(filteredDisasters);
+    } catch (error) {
+      toast.error("Error fetching disasters: " + error.message);
+      setError("Error fetching disasters: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (shouldFocusSearch) {
+      searchInputRef.current?.focus();
+      setShouldFocusSearch(false);
+    }
+    fetchDisasters();
+  }, [shouldFocusSearch, statusFilter]);
+
+  // Approve/Reject logic if you have disaster approval
+  const approveDisaster = async (id) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/api/disaster/${id}/approve`, { method: "PUT" });
+      if (!response.ok) throw new Error("Failed to approve disaster");
+      toast.success("Disaster approved successfully");
+      fetchDisasters();
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const rejectDisaster = async (id) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE_URL}/api/disaster/${id}/reject`, { method: "PUT" });
+      if (!response.ok) throw new Error("Failed to reject disaster");
+      toast.success("Disaster rejected");
+      fetchDisasters();
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete logic
+  const handleDelete = async (id) => {
+    if (deleteToastRef.current) return;
+    toast.dismiss();
+    toast(
+      (t) => (
+        <div className="flex items-center gap-4">
+          <p>Are you sure you want to delete this disaster?</p>
+          <div className="flex gap-2">
+            <button
+              onClick={async () => {
+                try {
+                  const response = await fetch(`${API_BASE_URL}/api/disaster/${id}`, { method: "DELETE" });
+                  const data = await response.json();
+                  if (!response.ok) throw new Error(data.message || "Failed to delete disaster");
+                  setDisasters((prev) => prev.filter((d) => d._id !== id));
+                  toast.dismiss(t.id);
+                  toast.success("Disaster deleted successfully");
+                } catch (error) {
+                  toast.dismiss(t.id);
+                  toast.error("Error deleting disaster: " + error.message);
+                }
+              }}
+              className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+            >
+              Delete
+            </button>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      { duration: 5000, position: "top-center" },
+    );
+  };
+
+  // Filtered disasters for search
+  const filteredDisasters = disasters.filter((d) => {
+    const searchTerm = searchQuery.toLowerCase();
+    return (
+      (d.disasterType || "").toLowerCase().includes(searchTerm) ||
+      (d.severityLevel || "").toLowerCase().includes(searchTerm) ||
+      (d.description || "").toLowerCase().includes(searchTerm) ||
+      (d.Location || "").toLowerCase().includes(searchTerm)
+    );
+  });
+
+  // Edit handler
+  const handleEdit = (disaster) => {
+    setEditingDisaster(disaster);
+    setIsEditModalOpen(true);
+    setIsAddModalOpen(false);
+  };
+
+  // Table/Grid views (update fields as needed)
+  const TableView = () => (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Disaster Type</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Severity</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Location</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {filteredDisasters.map((d, index) => (
+              <tr
+                key={d._id}
+                className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50/50"} hover:bg-emerald-50/50 transition-all duration-200 group`}
+              >
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
+                      <img src={d.images} alt={d.disasterType} className="w-full h-full object-cover" />
+                    </div>
+                    <span className="font-semibold text-gray-900 text-sm">{d.disasterType}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                        d.severityLevel === "Critical"
+                          ? "bg-red-100 text-red-700"
+                          : d.severityLevel === "High"
+                            ? "bg-orange-100 text-orange-700"
+                            : d.severityLevel === "Medium"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-green-100 text-green-700"
+                      }`}
+                    >
+                      {d.severityLevel}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span className="text-sm text-gray-700">{d.Location}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <span className="text-sm text-gray-700">{format(new Date(d.date), "MMM d, yyyy")}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        d.status === "Approved"
+                          ? "bg-green-100 text-green-700 border border-green-200"
+                          : d.status === "Rejected"
+                            ? "bg-red-100 text-red-700 border border-red-200"
+                            : "bg-yellow-100 text-yellow-700 border border-yellow-200"
+                      }`}
+                    >
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full mr-2 ${
+                          d.status === "Approved" ? "bg-green-500" : d.status === "Rejected" ? "bg-red-500" : "bg-yellow-500"
+                        }`}
+                      ></span>
+                      {d.status}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center justify-center gap-2">
+                    {d.status === "Pending" && (
+                      <>
+                        <button
+                          onClick={() => approveDisaster(d._id)}
+                          className="inline-flex items-center px-3 py-1.5 bg-green-500 text-white text-xs font-medium rounded-lg hover:bg-green-600 transition-colors shadow-sm"
+                        >
+                          <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => rejectDisaster(d._id)}
+                          className="inline-flex items-center px-3 py-1.5 bg-red-500 text-white text-xs font-medium rounded-lg hover:bg-red-600 transition-colors shadow-sm"
+                        >
+                          <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                          Reject
+                        </button>
+                      </>
+                    )}
+                    <button
+                      onClick={() => handleEdit(d)}
+                      className="p-2 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
+                      title="Edit"
+                    >
+                      <FaEdit size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(d._id)}
+                      className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                      title="Delete"
+                    >
+                      <FaTrash size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const GridView = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+      {filteredDisasters.map((d) => (
+        <div key={d._id} className="bg-white rounded-lg border-gray-100 border shadow-sm hover:shadow-md transition-shadow duration-200">
+          {d.images && <img src={d.images} alt={d.disasterType} className="w-full h-48 object-cover rounded-t-lg" />}
+          <div className="p-4 flex flex-col justify-between">
+            <div className="flex justify-between items-start mb-3">
+              <h2 className="text-lg font-semibold text-gray-900">{d.disasterType}</h2>
+              <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">{d.severityLevel}</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">{d.description}</p>
+            <div className="space-y-5 text-xs text-gray-500">
+              <div className="flex items-center">
+                <Map className="mr-2 " /> {d.Location}
+              </div>
+              <div className="flex items-center">
+                <FaCalendarAlt className="mr-2" /> {format(new Date(d.date), "MMM d, yyyy")}
+              </div>
+            </div>
+            <div className="mt-3 pt-3 flex items-center justify-between">
+              <div className="flex gap-3">
+                <button onClick={() => handleEdit(d)} className="text-gray-600 hover:text-green-600 transition-colors">
+                  <FaEdit size={16} />
+                </button>
+                <button onClick={() => handleDelete(d._id)} className="text-gray-600 hover:text-red-600 transition-colors">
+                  <FaTrash size={16} />
+                </button>
+              </div>
+              {/* Approve/Reject buttons for pending disasters */}
+              {d.status === "Pending" && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => approveDisaster(d._id)}
+                    className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => rejectDisaster(d._id)}
+                    className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const SearchBar = () => {
+    return (
+      <div className="relative  w-full">
+        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <FaSearch className="h-4 w-4 text-gray-400 z-50" />
+        </div>
+        <input
+          ref={searchInputRef}
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="block w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg bg-white/50 backdrop-blur-sm h-[36px] text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-1 outline-none focus:ring-green-500 focus:border-transparent transition-all duration-200 text-[13px]"
+          placeholder="Search disasters..."
+        />
+        {searchQuery && (
+          <button
+            onClick={() => {
+              setSearchQuery("");
+              setShouldFocusSearch(true);
+            }}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+          >
+            <span className="text-gray-400 hover:text-gray-500 p-1 rounded-full hover:bg-gray-100 transition-colors">✕</span>
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 ">
+      <header className="bg-gray-50 shadow-sm sticky top-0 z-40">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex justify-between items-center text-left">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between text-left  mx-4">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Disaster Management</h1>
+                <p className="text-gray-500 text-[14px]">Manage disaster records and their statuses</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <SearchBar />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="border text-[13px] border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                <option value="All">All</option>
+                <option value="Approved">Approved</option>
+                <option value="Pending">Pending</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+              <div className="flex flex-row gap-2">
+                <div className="inline-flex items-center rounded-lg z-20 border border-gray-200 bg-white p-1">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    type="button"
+                    className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      viewMode === "grid" ? "bg-emerald-100 text-emerald-800" : "text-gray-600 hover:text-gray-800"
+                    }`}
+                  >
+                    <LayoutGrid className="w-4 h-4 mr-1 " />
+                    Grid
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    type="button"
+                    className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                      viewMode === "list" ? "bg-emerald-100 text-emerald-800" : "text-gray-600 hover:text-gray-800"
+                    }`}
+                  >
+                    <List className="w-4 h-4 mr-1" />
+                    Table
+                  </button>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setEditingDisaster(null);
+                  setIsAddModalOpen(true);
+                  setIsEditModalOpen(false);
+                }}
+                className="hover:border-green-300 active:bg-green-100 z-10 w-[145px] h-[38px] mt-[1px] border border-gray-200 bg-white p-1 justify-center text-[#626262] hover:text-green-600 px-2 py-3 rounded-md transition-all duration-300 text-[14px] font-medium !rounded-button whitespace-nowrap cursor-pointer shadow-sm flex items-center"
+              >
+                <Plus className="mr-2" /> Add Disaster
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className=" mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex gap-6">
+          {/* Left Sidebar - Statistics */}
+          <div className="w-72 flex-shrink-0 space-y-4">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+              <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-4">Overview</h3>
+
+              <div className="space-y-4">
+                {/* Total Disasters */}
+                <div className="pb-4 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500 uppercase">Total Disasters</span>
+                    <span className="text-2xl font-bold text-gray-900">{disasters.length}</span>
+                  </div>
+                </div>
+
+                {/* Pending */}
+                <div className="pb-4 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500 uppercase">Pending</span>
+                    <span className="text-2xl font-bold text-gray-900">{disasters.filter((d) => d.status === "Pending").length}</span>
+                  </div>
+                </div>
+
+                {/* Approved */}
+                <div className="pb-4 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500 uppercase">Approved</span>
+                    <span className="text-2xl font-bold text-gray-900">{disasters.filter((d) => d.status === "Approved").length}</span>
+                  </div>
+                </div>
+
+                {/* Rejected */}
+                <div className="pb-4 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500 uppercase">Rejected</span>
+                    <span className="text-2xl font-bold text-gray-900">{disasters.filter((d) => d.status === "Rejected").length}</span>
+                  </div>
+                </div>
+
+                {/* Severity Levels */}
+                <div>
+                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-3">Severity Levels</h4>
+                  <div className="space-y-2">
+                    {["Critical", "High", "Medium", "Low"].map((severity) => {
+                      const count = disasters.filter((d) => d.severityLevel === severity).length;
+                      if (count === 0) return null;
+                      return (
+                        <div key={severity} className="flex items-center justify-between py-1">
+                          <span className="text-sm text-gray-600">{severity}</span>
+                          <span className="text-sm font-semibold text-gray-900 bg-gray-100 px-2 py-0.5 rounded">{count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Content Area */}
+          <div className="flex-1 min-w-0">
+            {error && <div className="mb-6 p-3 text-sm bg-red-50 border border-red-200 rounded-md text-red-600">{error}</div>}
+            {loading ? (
+              <div className="mx-auto grid grid-cols-1 gap-5 md:auto md:grid-cols-3">
+                {[...Array(6)].map((_, i) => (
+                  <CardSkeleton key={i} />
+                ))}
+              </div>
+            ) : filteredDisasters.length === 0 ? (
+              <div className="text-center text-gray-400 text-[16px] py-10">No records found.</div>
+            ) : viewMode === "grid" ? (
+              <BentoGrid className="w-full z-20">
+                {filteredDisasters.map((disaster, i) => (
+                  <BentoGridItem
+                    key={disaster._id}
+                    title={disaster.disasterType}
+                    description={disaster.description}
+                    header={disaster.severityLevel}
+                    icon={disaster.images}
+                    data={disaster}
+                    navigation={() => {}}
+                    type="admin"
+                    approveDisaster={approveDisaster}
+                    rejectDisaster={rejectDisaster}
+                    className={i === 3 || i === 6 ? "md:col-span-2" : ""}
+                  />
+                ))}
+              </BentoGrid>
+            ) : (
+              <TableView />
+            )}
+          </div>
+        </div>
+      </main>
+
+      <Modal
+        isOpen={isAddModalOpen}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setEditingDisaster(null);
+        }}
+        title="Create New Disaster"
+        maxWidth="sm:max-w-5xl"
+      >
+        <DisasterForm onDisasterSuccess={fetchDisasters} onDisasterClosed={() => setIsAddModalOpen(false)} />
+      </Modal>
+
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setEditingDisaster(null);
+        }}
+        title="Edit Disaster"
+        maxWidth="sm:max-w-5xl"
+      >
+        <DisasterForm
+          initialData={editingDisaster}
+          isEdit={true}
+          onDisasterSuccess={fetchDisasters}
+          onDisasterClosed={() => setIsEditModalOpen(false)}
+        />
+      </Modal>
+
+      <Modal isOpen={!!imageModalUrl} onClose={() => setImageModalUrl(null)} title="Image Preview">
+        <div className="space-y-4">
+          <img src={imageModalUrl} alt="Preview" className="w-full h-auto rounded-lg" />
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800">{imageModalTitle}</h2>
+            <p className="text-sm text-gray-600 mt-1">{imageModalDescription}</p>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+};
+
+export default AdminDisasterView;
