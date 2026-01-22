@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useModal } from "../main-components/ModalContext";
-import icon from "../../assets/Shield.png";
 import {
   Home,
   Info,

@@ -9,17 +9,7 @@ const generateToken = (user) => {
 };
 
 export const register = async (req, res) => {
-  const {
-    name,
-    email,
-    password,
-    role,
-    status,
-    last_active,
-    Country,
-    joinDate,
-    profile_img,
-  } = req.body;
+  const { name, email, password, role, status, last_active, Country, joinDate, profile_img } = req.body;
 
   const userExists = await User.findOne({ email });
   if (userExists) {
@@ -55,6 +45,7 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  console.log("Login attempt:", req.body);
   const { email, password } = req.body;
 
   const user = await User.findOne({
@@ -70,8 +61,7 @@ export const login = async (req, res) => {
 
   if (user.status === "Inactive") {
     return res.status(401).json({
-      message:
-        "Your account is inactive. Please contact administrative support.",
+      message: "Your account is inactive. Please contact administrative support.",
     });
   }
 
@@ -129,8 +119,7 @@ export const updateProfile = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const { name, email, password, status, last_active, Country, profile_img } =
-      req.body;
+    const { name, email, password, status, last_active, Country, profile_img } = req.body;
 
     if (name) user.name = name;
     if (email) user.email = email;

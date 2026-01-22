@@ -29,7 +29,40 @@ Dbcon();
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+
+// CORS Configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+
+    const allowedOrigins = [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://localhost:5000",
+      process.env.FRONTEND_URL,
+      process.env.CLIENT_URL,
+    ].filter(Boolean); // Remove undefined values
+
+    if (allowedOrigins.indexOf(origin) !== -1 || origin.includes("netlify.app") || origin.includes("vercel.app")) {
+      callback(null, true);
+    } else {
+      console.log("CORS blocked origin:", origin);
+      callback(null, true); // Allow all origins for now, change to false for production
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+  exposedHeaders: ["Set-Cookie"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly
+app.options("*", cors(corsOptions));
 
 // Routes
 app.use("/api/payment", PaymentRoutes); // Payment-related endpoints
