@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-import Icon1 from "../assets/Icons/Icon1.png";
-import Icon2 from "../assets/Icons/Icon2.png";
-import Icon3 from "../assets/Icons/Icon3.png";
 import Verticle_Barchart from "../Components/disaster-funding/Verticle_BarChart.jsx";
 import PieChart from "../Components/disaster-funding/Pie-Chart.jsx";
 import DisasterLineChart from "../Components/admin-dashboard/DisasterLineChart.jsx";
